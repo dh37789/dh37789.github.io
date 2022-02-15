@@ -1,10 +1,10 @@
 ---
-title: "파이썬"
+title: "이론"
 layout: archive
-permalink: categories/python
+permalink: categories/algorithm
 author_profile: true
 sidebar_main: true
 ---
 
-{% assign posts = site.categories.python %}
+{% assign posts = site.categories.algorithm %}
 {% for post in posts %} {% include archive-single2.html type=page.entries_layout %} {% endfor %}

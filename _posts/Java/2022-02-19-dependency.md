@@ -131,6 +131,7 @@ class Order {
 
 
 1. Shop & OrderLineItem의 연관관계를 연결한다.
+
 ```java
 @Entity
 @Table(naem="ORDERS")
@@ -165,6 +166,7 @@ public class Order {
 ```
 
 2. 가게가 영업중인지 확인 & 주문금액이 최소주문금액이상인지
+
 - (Order -> Shop)
   1. isOpen();
   2. isValidAmount();
@@ -211,6 +213,7 @@ public class Shop {
 ```
 
 3. 주문중에 서버의 주문정보가 바뀌었을 수 있으니 재검증
+
 - (Order -> OrderLineItem)
   1. validate();
 - (OrderLineItem -> Menu)
@@ -226,6 +229,7 @@ public class OrderLineItem {
 ```
 
 4. 메뉴의 이름과 주문항목의 이름 비교
+
 - (Menu -> OptionGroup Specification)
   1. isSatisfiedBy(oog);
 - (OptionGroup Specification -> Order OptionGrop)
@@ -255,6 +259,7 @@ public class Menu {
 ```
 
 5. 옵션그룹의 이름과 주문옵션그룹의 이름 비교
+
 - (OptionGroup Specification -> Option Specification)
   1. isSatisfiedBy(oOption);
 
@@ -285,6 +290,7 @@ public class OptionGroupSpecification {
 ```
 
 6. 옵션의 이름과 주문옵션의 이름 비교 & 옵션의 가격과 주문옵션의 가격 비교
+
 - (OptionGroup Specification -> Option Specification)
   1. getName();
   2. getPrice();

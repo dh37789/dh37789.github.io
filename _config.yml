@@ -274,6 +274,8 @@ compress_html:
   ignore:
     envs: development
 
+# Write
+future: true
 
 # Defaults
 defaults:

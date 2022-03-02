@@ -10,7 +10,9 @@ date: 2022-02-19
 last_modified_at: 2022-02-21
 ---
 
-## 의존성_우아한테크세미나-190620-우아한객체지향 (1)
+# 의존성_우아한테크세미나-190620-우아한객체지향 (1)
+
+## 의존성
 
 ![의존성]({{site.url}}/assets/image/2022-02-21/dependency_a.PNG)
 
@@ -304,3 +306,17 @@ public class OptionSpecification {
     }
 }
 ```
+
+## 레이어 아키텍처 (Layered Architecture)
+
+위의 해당 예제는 레이어 아키텍처 중 **Domain의 과정**에 들어가는 과정이다.  
+영역의 관계를 정의하는 단계라고 보면 된다.  
+
+![rayer1]({{site.url}}/assets/image/2022-03-02/rayer001.PNG )
+
+아래의 소스와 같이 Domain과정에서 벗어난 request를 받거나 DB에 접근하는 로직의 구현은 Service 레이어에서 진행한다.
+
+![rayer2]({{site.url}}/assets/image/2022-03-02/rayer002.PNG )
+
+
+

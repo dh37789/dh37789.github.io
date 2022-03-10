@@ -131,6 +131,15 @@
   }
 }
 
+.list__item {
+  font-size: 0.9em;
+  margin: 0 0 5px;
+}
+
+.list__item__a {
+  text-decoration-line : none;
+}
+
 /*
    Grid view
    ========================================================================== */

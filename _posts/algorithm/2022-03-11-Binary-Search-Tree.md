@@ -34,18 +34,37 @@ last_modified_at: 2022-03-11
 
 ## 이진탐색트리의 구현
 
+이진탐색트리의 삽입, 제거, 조회를 제네릭으로 구현해보았다.
+
 ```java
-public class BinarySearchTree {
-    private static class TreeNode<T> {
+public class BinarySearchTree<T extends Comparable<T>> {
+    private TreeNode<T> rootNode = null;
+
+    private static class TreeNode<T extends Comparable<T>> {
         T data;
         TreeNode left;
         TreeNode right;
 
-        public TreeNode(T data){
+        public TreeNode(T data) {
             this.data = data;
             this.left = null;
             this.right = null;
         }
     }
-}
+
+    /**
+     * 트리에서 item을 삽입한다.
+     */
+    public boolean insertNode(T item) {
+
+        if (isEmpty()){
+            rootNode = new TreeNode(item);
+            return true;
+        } else {
+            TreeNode<T> node = rootNode;
+
+            /** data 및 좌, 우를 비교하여 자식노드가 비어있는 곳을 찾아 넣어준다. */
+            while (true) {
+                if (node.data.compareTo(item) > 0) {
+
 ```

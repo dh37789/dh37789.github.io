@@ -89,19 +89,19 @@ for (int i = index; i < chickenList.size(); i++) {
 
 - 해당 메서드에서 빠져나와 다시 재귀함수를 탈 경우 아래와 같이 배열이 채워진다.
 
-![치킨배달4]({{site.url}}/assets/image/2022-04-27/chicken4.PNG)
+![치킨배달4]({{site.url}}/assets/image/2022-04-27/chicken4.png)
 
 `2. i 가 1일 경우` 
 
 - i가 1일 경우 다시 재귀함수 타면 아래와 같이 된다. 배열 {2, 1}의 경우 기존의 탐색한 배열 {1, 2}와 중복되므로, 탐색하지 않는다. 
 
-![치킨배달5]({{site.url}}/assets/image/2022-04-27/chicken5.PNG)
+![치킨배달5]({{site.url}}/assets/image/2022-04-27/chicken5.png)
 
 `3. i 가 2일 경우`
 
 - i가 2일 경우 다시 재귀함수 타면 아래와 같이 된다. 배열 {3, 1}, {3, 2}의 경우 기존의 배열 {1, 3}, {2, 3}와 중복되므로 탐색하지 않는다.
 
-![치킨배달6]({{site.url}}/assets/image/2022-04-27/chicken6.PNG)
+![치킨배달6]({{site.url}}/assets/image/2022-04-27/chicken6.png)
 
 만약 위의 조건이 만족한다면, 
 

@@ -23,8 +23,22 @@
         </ul>
         <ul>
           {% for category in site.categories %}
-            {% if category[0] == "Python" %}
-              <li><a href="/categories/python" class="">Python ({{category[1].size}})</a></li>
+            {% if category[0] == "EffectiveJava" %}
+              <li><a href="/categories/EffectiveJava" class="">EffectiveJava ({{category[1].size}})</a></li>
+            {% endif %}
+          {% endfor %}
+        </ul>
+        <ul>
+          {% for category in site.categories %}
+            {% if category[0] == "DesignPattern" %}
+              <li><a href="/categories/DesignPattern" class="">DesignPattern ({{category[1].size}})</a></li>
+            {% endif %}
+          {% endfor %}
+        </ul>
+        <ul>
+          {% for category in site.categories %}
+            {% if category[0] == "git" %}
+              <li><a href="/categories/git" class="">Git ({{category[1].size}})</a></li>
             {% endif %}
           {% endfor %}
         </ul>

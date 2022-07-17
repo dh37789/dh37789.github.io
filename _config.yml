@@ -16,7 +16,7 @@ minimal_mistakes_skin    : "default"
 
 # Site Settings
 locale                   : "en-US"
-title                    : "dhaudgkr"
+title                    : "오명학 기술블로그?"
 title_separator          : "-"
 subtitle                 : # site tagline that appears below site title in masthead
 name                     : "Oh myeonghak"
@@ -102,7 +102,7 @@ analytics:
 
 # Site Author
 author:
-  name             : "OMhak"
+  name             : "Mho"
   avatar           : # path of avatar image, e.g. "/assets/images/bio-photo.jpg"
   bio              : ""
   location         : "Seoul"

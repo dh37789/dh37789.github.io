@@ -55,3 +55,41 @@ O
 _posts/JPA/2022-06-13-jpa-06.md,4\5\450eff51b2949392d69021739d01f8db8bdb5847
 O
 _posts/JPA/2022-07-17-jpa-19.md,7\c\7ceb25b199ebd0ec922ed45a003305f62c822cd6
+O
+_posts/JPA/2022-07-17-jpa-20.md,4\7\473e2e630b2178cc194b7310b8c1716e38b89900
+O
+_posts/JPA/2022-07-20-jpa-21.md,c\4\c4806435bc251ba11b6149006a8ad651be60cb21
+O
+_posts/JPA/2022-08-19-jpa-32.md,7\a\7ac25d72cc83f62d590654641a7fe11199440ed3
+O
+_posts/JPA/2022-08-20-jpa-33.md,9\a\9aa5748a4d76fc5a020abd6ad8b361b48877a8c1
+O
+_posts/JPA/2022-08-20-jpa-34.md,e\2\e25248983cbb0b392c57df162422a18c96026c90
+O
+_posts/JPA/2022-07-12-jpa-16.md,3\7\3777ed2bef1a49acf4b52f3b4f5f9f53f5becb2a
+O
+_posts/JPA/2022-07-15-jpa-18.md,7\5\75c885183a3f19dc1d05401f67b523fe90fe0280
+O
+_posts/JPA/2022-07-11-jpa-15.md,b\c\bcc6fd93b614bd33c7eec3a700e9c97f0ca7aad5
+O
+_posts/JPA/2022-08-24-jpa-35.md,a\b\ab3700e147adfbf8045d7f65c7564d0ce053bf5f
+W
+'_pages/categories/category-CleanCode.md,5\8\587c49284dfa48a48a5cd92627a735a72b2759b4
+O
+_posts/JPA/2022-08-31-jpa-36.md,e\d\ed2567bea5e065587f6422c5870885eb176b0bae
+O
+_posts/JPA/2022-09-06-jpa-38.md,e\0\e0dfa0173587f34f8b9054adc151f5e495360a2e
+O
+_posts/JPA/2022-09-02-jpa-37.md,2\3\23334ba8e6a35b7ef077f1369d573c01a1c99e56
+a
+1_posts/Java/2022-05-20-Inheritance-Composition.md,3\2\32eeddf5d079a5779f482c59e2f444705e98e634
+U
+%_posts/Java/2022-03-02-dependency2.md,6\7\670360943ca992fdeb67c65d8eed2ea0ab6881ae
+T
+$_posts/Java/2022-02-19-dependency.md,7\a\7a630f2f1a8e33a06a663083ce5931b9b409d1a1
+R
+"_posts/Java/2022-02-16-new-line.md,5\3\53e87b420417155789688e8eb0bf8f758c4b8c5f
+O
+_posts/JPA/2022-07-13-jpa-17.md,3\1\318ae9461057086c398a59c1c1583d746febd7d3
+O
+_posts/JPA/2022-09-12-jpa-40.md,d\0\d03b1b62ae338858c0f01b7782d7688c6acd92ce

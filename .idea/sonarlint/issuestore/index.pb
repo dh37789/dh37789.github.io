@@ -20,8 +20,6 @@ O
 Y
 )_posts/EffectiveJava/2022-05-24-item19.md,1\7\17740b233a1c423e4c16a3e127d86f9de8c8e589
 O
-_posts/JPA/2022-06-06-jpa-01.md,4\1\41e18b2440ed4e7a1651429763566e8df011bd52
-O
 _posts/JPA/2022-07-22-jpa-23.md,d\9\d968b896cd592ac6970ee16a8faf47055f793e04
 O
 _posts/JPA/2022-07-23-jpa-24.md,8\3\83a9e8fc00c98803d5ae4afc17c13fdde4a0fcae

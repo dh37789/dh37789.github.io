@@ -24,7 +24,7 @@ last_modified_at: 2022-05-24
 
 ## 구조
 
-![팩토리 메서드 구조]({{site.url}}/assets/image/2022-05-24/factory.png)
+![팩토리 메서드 구조]({{site.url}}/assets/image/2022/2022-05-24/factory.png)
 
 - Product(Document) : 팩토리 메서드가 생성하는 객체의 인터페이스를 정의합니다.
 - ConcreteProduct(MyDocument) : Product 클래스에 정의된 인터페이스를 실제로 구현합니다.

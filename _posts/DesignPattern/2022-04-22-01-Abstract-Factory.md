@@ -26,7 +26,7 @@ last_modified_at: 2022-04-22
 
 ## 구조
 
-![추상팩토리 구조]({{site.url}}/assets/image/2022-04-22/abstract.png)
+![추상팩토리 구조]({{site.url}}/assets/image/2022/2022-04-22/abstract.png)
 
 - AbstractFactory : 제품에 대한 객체를 생성하는 인터페이스를 정의합니다.
 - ConcreteFactory : 구체적인 제품에 대한 객체를 생성하는 구현을 담당합니다.

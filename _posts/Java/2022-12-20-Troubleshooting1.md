@@ -19,7 +19,7 @@ last_modified_at: 2022-12-20
 
 > 갑자기 무수한 요청이 오더니 죽어버린 서버..
 
-![Connection Poll]({{site.url}}/assets/image/2022-12/21-trouble001.png)
+![Connection Poll]({{site.url}}/assets/image/2022/2022-12/21-trouble001.png)
 
 
 무슨일인고.. 하고 서버로그를 보니, HikariCP가 Connecion을 얻을 수 없어서 timeoutException을 발생시켰다는 로그를 발견했습니다.
@@ -171,7 +171,7 @@ java.lang.OutOfMemoryError: GC overhead limit exceeded
 
 해당 에러 로그에 대해 검색해보니 프로세스의 모든 CPU 가용 시간중 **GC를 수집하게 되어 일시중지 하게 되는 시간이 98% 이상**을 사용하게 되고 **실제 Application 작업 시간이 2%미만**이 될 경우 발생한다고 합니다.
 
-![Connection Poll]({{site.url}}/assets/image/2022-12/21-trouble004.png)
+![Connection Poll]({{site.url}}/assets/image/2022/2022-12/21-trouble004.png)
 
 
 해당 에러를 찾아 확인해보니 이제야 원인을 잡게된 듯 합니다.
@@ -180,7 +180,7 @@ java.lang.OutOfMemoryError: GC overhead limit exceeded
 
 실제로 해당 시각에 DB와 통신한 데이터 통신량을 보니 150MB정도의 어마어마한 양의 데이터를 읽어 들어온 흔적이 있었습니다. 
 
-![Connection Poll]({{site.url}}/assets/image/2022-12/21-trouble005.png)
+![Connection Poll]({{site.url}}/assets/image/2022/2022-12/21-trouble005.png)
 
 결국 근본적인 원인은 슬로우 쿼리가 원인 이었습니다. 해당 null이 들어가게 될 조건을 수정하여 이슈를 해결할 수 있었습니다.
 

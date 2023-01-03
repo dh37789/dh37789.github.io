@@ -12,7 +12,7 @@ last_modified_at: 2022-02-28
 
 # 연결리스트(LinkedList)
 
-![연결리스트]({{site.url}}/assets/image/2022-02-25/linkedList001.PNG)
+![연결리스트]({{site.url}}/assets/image/2022/2022-02-25/linkedList001.PNG)
 연결 리스트(Linked List)란 각 노드가 데이터와 포인터를 가지고 한 줄로 연결되어 있는 방식으로 데이터를 저장하는 자료 구조를 말합니다.  
 이름과 같이 각 데이터를 담은 노드들이 연결되어 있는데, 노드의 포인터가 다음이나 이전의 노드의 연결을 담당하고 있습니다.  
 

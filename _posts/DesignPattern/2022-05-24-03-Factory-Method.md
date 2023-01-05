@@ -125,7 +125,7 @@ public class WoodDogRobot extends AnimalRobot {
 }
 ```
 
-### 3. Product 타입을 반환한는 팩토리 메서드 구현
+### 3. Product 타입을 반환하는 팩토리 메서드 구현
 
 type을 매개변수로 받아 type 별로 맞는 `AnimalRobot` 객체를 반환하는 팩토리 메서드를 구현합니다.
 

@@ -1,5 +1,5 @@
 ---
-title: "[Git] Git 메시지 컨벤션"
+title: "[Git] Git 메시지 컨벤션이란?"
 
 categories: git
 

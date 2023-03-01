@@ -1,5 +1,5 @@
 ---
-title:  "[Security] 암호화"
+title:  "[Security] 암호화 알고리즘"
 
 categories: security
 

@@ -10,6 +10,8 @@ date: 2022-09-03
 last_modified_at: 2022-09-03
 ---
 
+Spring에서 제공하는 Page가 Feign에서 먹히지 않는다는 걸 알게된후 따로 정리한 글입니다.
+
 # Feign Client에서 페이징 처리하기
 
 Feign Client는 넷플릭스에서 만든 외부 API를 쉽게 호출할수 있도록 도와주는 라이브러리입니다.

@@ -55,6 +55,7 @@ Optimistic은 사전적 의미로는 '낙관적인' 으로 트랜잭션이 서�
 
 또한 낙관적 락은 트랜잭션을 커밋하기 전까지는 트랜잭션의 충돌을 알 수가 없다. 그러므로, 충돌 후 트랜잭션 롤백 및 재시작하는 로직은 개발자가 직접 구현을 해주어야 한다.
 
+낙관적 락을 도식화 한다면 아래와 같다.
 
 ## 비관적 락
 
@@ -65,4 +66,114 @@ DB에서 제공하는 락의 기능을 사용하며, 트랜잭션이 시작할 �
 정보를 조회 또는 수정단계에서 Lock을 걸기 때문에, 수정단계에서 충돌유무를 확인할 수 있다. 하지만 Lock에 의해 교착상태(DeadLock)에 빠질 위험이 있다.
 
 
+
+
 출처 : [Optimistic vs. Pessimistic locking - Stack Overflow](https://stackoverflow.com/questions/129329/optimistic-vs-pessimistic-locking)
+
+
+## 예시
+
+이론적으로만 설명한다면 이해하는데 조금 어려움이 있을 것이라고 생각된다.
+
+간략하게 예시를 들어보자.
+
+먼저 Lock이 걸리지 않았을 경우 실패하는 테스트를 확인해보자.
+
+
+- Entity
+
+```java
+@Entity
+@NoArgsConstructor
+public class Stock {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private Long productId;
+
+    private Long quantity;
+
+    public Stock(Long productId, Long quantity) {
+        this.productId = productId;
+        this.quantity = quantity;
+    }
+
+    public Long getQuantity() {
+        return quantity;
+    }
+
+    public void decrease(Long quantity) {
+        if (this.quantity - quantity < 0) {
+            throw new RuntimeException("Low quantity!!");
+        }
+        this.quantity = this.quantity - quantity;
+    }
+}
+```
+
+
+- StockService
+
+```java
+@Transactional
+public void decrease(Long id, Long quantity) {
+    Stock stock = stockRepository.findById(id).orElseThrow();
+
+    stock.decrease(quantity);
+
+    stockRepository.saveAndFlush(stock);
+}
+```
+
+
+- Test
+
+```java
+@BeforeEach
+public void before() {
+    Stock stock = new Stock(1L, 100L);
+    
+    stockRepository.saveAndFlush(stock);
+}
+
+@Test
+void 동시에_100번_요청() throws InterruptedException {
+
+    // given
+    int threadCount = 100;
+    ExecutorService executorService = Executors.newFixedThreadPool(32);
+    CountDownLatch countDownLatch = new CountDownLatch(threadCount);
+
+    // when
+    for (int i = 0; i < threadCount; i++) {
+        executorService.submit(() -> {
+            try {
+                stockService.decrease(1L, 1L);
+            } finally {
+                countDownLatch.countDown();
+            }
+        });
+    }
+
+    countDownLatch.await();
+
+    Stock stock = stockRepository.findById(1L).orElseThrow();
+
+    // then
+    assertThat(stock.getQuantity()).isEqualTo(0L);
+}
+```
+
+`ExecutorService`는 스레드를 생성하여 병렬처리 하는 방법이다. 32개의 스레드를 생성하여, 100개의 재고를 만들고 재고 감소 로직에 한번에 접근해보았다 결과는 어떻게 되었을까?
+
+
+![Database Lock]({{site.url}}/assets/image/2022/2023-03/26-con001.png)
+
+0이되어야 할 재고가 96개나 남아있었다!
+
+이는 트랜잭션이 커밋되기 전에 재고 리소스에 접근하여, 감소되지 않은 데이터를 가져와 작업을 하다보니 이러한 이슈가 발생한것이다.
+
+여기에 낙관적 락과 비관적 락을 적용해보도록 하자.
+

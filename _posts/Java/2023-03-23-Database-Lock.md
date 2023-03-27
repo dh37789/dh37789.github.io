@@ -167,7 +167,7 @@ void 동시에_100번_요청() throws InterruptedException {
 `ExecutorService`는 스레드를 생성하여 병렬처리 하는 방법이다. 32개의 스레드를 생성하여, 100개의 재고를 만들고 재고 감소 로직에 한번에 접근해보았다 결과는 어떻게 되었을까?
 
 
-![Database Lock]({{site.url}}/assets/image/2022/2023-03/26-con001.png)
+![Database Lock]({{site.url}}/assets/image/2023/2023-03/26-con001.png)
 
 0이되어야 할 재고가 96개나 남아있었다!
 
@@ -261,7 +261,7 @@ void 동시에_100번_요청_by_PessimisticLock() throws InterruptedException {
 
 정상적으로 테스트가 성공하는것을 볼 수 있다.
 
-![Database Lock]({{site.url}}/assets/image/2022/2023-03/26-con002.png)
+![Database Lock]({{site.url}}/assets/image/2023/2023-03/26-con002.png)
 
 QueryDsl의 경우 아래와 같이 `.setLockMode(LockModeType.PESSIMISTIC_WRITE)` 의 메소드 체이닝을 추가해주면 된다.
 
@@ -416,7 +416,7 @@ void 동시에_100번_요청_by_OptimisticLock() throws InterruptedException {
 
 테스트가 성공하는 것을 볼 수 있다.
 
-![Database Lock]({{site.url}}/assets/image/2022/2023-03/26-con003.png)
+![Database Lock]({{site.url}}/assets/image/2023/2023-03/26-con003.png)
 
 
 QueryDsl의 경우 아래와 같이 `.setLockMode(LockModeType.OPTIMISTIC)` 의 메소드 체이닝을 추가해주면 된다.

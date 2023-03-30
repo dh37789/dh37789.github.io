@@ -1,7 +1,7 @@
 ---
 title: "[Gold5] No.15686 치킨배달"
 
-categories: baekjoon
+categories: algorithmQuestion
 
 toc: true
 toc_sticky: true

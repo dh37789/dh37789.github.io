@@ -1,7 +1,7 @@
 ---
 title:  "[Level1] 직사각형 별찍기"
 
-categories: programmers
+categories: algorithmQuestion
 
 toc: true
 toc_sticky: true

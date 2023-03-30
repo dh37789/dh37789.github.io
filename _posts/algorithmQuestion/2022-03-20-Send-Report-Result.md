@@ -1,7 +1,7 @@
 ---
 title:  "[Level1] 신고 결과 받기 for Kakao"
 
-categories: programmers
+categories: algorithmQuestion
 
 toc: true
 toc_sticky: true

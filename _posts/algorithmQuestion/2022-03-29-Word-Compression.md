@@ -1,7 +1,7 @@
 ---
 title:  "[Level2] 문자열 압축"
 
-categories: programmers
+categories: algorithmQuestion
 
 toc: true
 toc_sticky: true

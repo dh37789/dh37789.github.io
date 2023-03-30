@@ -1,7 +1,7 @@
 ---
 title:  "[Level1] 같은 숫자는 싫어"
 
-categories: programmers
+categories: algorithmQuestion
 
 toc: true
 toc_sticky: true

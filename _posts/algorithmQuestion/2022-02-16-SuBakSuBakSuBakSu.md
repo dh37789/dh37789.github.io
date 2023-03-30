@@ -1,7 +1,7 @@
 ---
 title:  "[Level1] 수박수박수박수박수?"
 
-categories: programmers
+categories: algorithmQuestion
 
 toc: true
 toc_sticky: true

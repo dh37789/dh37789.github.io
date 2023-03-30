@@ -1,7 +1,7 @@
 ---
 title:  "[Level2] 최대값과 최소값"
 
-categories: programmers
+categories: algorithmQuestion
 
 toc: true
 toc_sticky: true

@@ -1,3 +1,15 @@
+---
+title:  "[Level1] 서울에서 김서방 찾기"
+
+categories: algorithmQuestion
+
+toc: true
+toc_sticky: true
+
+date: 2022-02-16
+last_modified_at: 2022-02-16
+---
+
 package com.programmers.level01;
 
 import java.util.Arrays;

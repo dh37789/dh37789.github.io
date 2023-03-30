@@ -1,7 +1,7 @@
 ---
 title:  "[Level1] 문자열 다루기 기본"
 
-categories: programmers
+categories: algorithmQuestion
 
 toc: true
 toc_sticky: true

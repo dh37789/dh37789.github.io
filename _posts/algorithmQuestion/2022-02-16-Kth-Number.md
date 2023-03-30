@@ -1,7 +1,7 @@
 ---
 title:  "[Level1] K번째 수"
 
-categories: programmers
+categories: algorithmQuestion
 
 toc: true
 toc_sticky: true

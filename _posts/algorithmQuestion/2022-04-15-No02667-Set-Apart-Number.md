@@ -1,7 +1,7 @@
 ---
 title:  "[Silver1] No.02667 단지번호붙이기"
 
-categories: baekjoon
+categories: algorithmQuestion
 
 toc: true
 toc_sticky: true

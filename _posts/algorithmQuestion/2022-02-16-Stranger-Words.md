@@ -1,7 +1,7 @@
 ---
 title:  "[Level1] 이상한 문자 만들기"
 
-categories: programmers
+categories: algorithmQuestion
 
 toc: true
 toc_sticky: true

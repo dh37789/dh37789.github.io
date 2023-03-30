@@ -1,7 +1,7 @@
 ---
 title:  "[Level1] 문자열 내림차순으로 정렬하기"
 
-categories: programmers
+categories: algorithmQuestion
 
 toc: true
 toc_sticky: true

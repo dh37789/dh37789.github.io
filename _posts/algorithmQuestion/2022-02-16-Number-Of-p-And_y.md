@@ -1,7 +1,7 @@
 ---
 title:  "[Level1] 문자열내의 p와 y의 개수"
 
-categories: programmers
+categories: algorithmQuestion
 
 toc: true
 toc_sticky: true

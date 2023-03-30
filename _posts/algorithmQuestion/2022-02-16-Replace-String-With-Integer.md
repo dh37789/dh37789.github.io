@@ -1,7 +1,7 @@
 ---
 title:  "[Level1] 문자열을 숫자로 바꾸기"
 
-categories: programmers
+categories: algorithmQuestion
 
 toc: true
 toc_sticky: true

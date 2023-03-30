@@ -1,7 +1,7 @@
 ---
 title:  "[Level3] 다단계 칫솔 판매"
 
-categories: programmers
+categories: algorithmQuestion
 
 toc: true
 toc_sticky: true

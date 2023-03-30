@@ -1,7 +1,7 @@
 ---
 title:  "[Silver4] No.01920 수찾기"
 
-categories: baekjoon
+categories: algorithmQuestion
 
 toc: true
 toc_sticky: true

@@ -1,7 +1,7 @@
 ---
 title:  "[Level1] 두 정수 사이의 합"
 
-categories: programmers
+categories: algorithmQuestion
 
 toc: true
 toc_sticky: true

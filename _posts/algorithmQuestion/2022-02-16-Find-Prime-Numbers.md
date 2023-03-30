@@ -1,7 +1,7 @@
 ---
 title:  "[Level1] 소수 찾기"
 
-categories: programmers
+categories: algorithmQuestion
 
 toc: true
 toc_sticky: true

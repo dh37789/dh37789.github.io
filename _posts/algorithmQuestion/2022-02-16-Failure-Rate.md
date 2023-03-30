@@ -1,7 +1,7 @@
 ---
 title:  "[Level1] 실패율"
 
-categories: programmers
+categories: algorithmQuestion
 
 toc: true
 toc_sticky: true

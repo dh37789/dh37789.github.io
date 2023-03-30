@@ -1,7 +1,7 @@
 ---
 title:  "[Level1] 가운데 글자 가져오기"
 
-categories: programmers
+categories: algorithmQuestion
 
 toc: true
 toc_sticky: true

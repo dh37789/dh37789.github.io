@@ -1,7 +1,7 @@
 ---
 title:  "[Level2] 다리를 지나가는 트럭"
 
-categories: programmers
+categories: algorithmQuestion
 
 toc: true
 toc_sticky: true

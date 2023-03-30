@@ -1,7 +1,7 @@
 ---
 title:  "[Level1] 나누어 떨어지는 숫자"
 
-categories: programmers
+categories: algorithmQuestion
 
 toc: true
 toc_sticky: true

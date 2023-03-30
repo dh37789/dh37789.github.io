@@ -1,7 +1,7 @@
 ---
 title:  "[Level1] 핸드폰 번호 가리기"
 
-categories: programmers
+categories: algorithmQuestion
 
 toc: true
 toc_sticky: true

@@ -1,7 +1,7 @@
 ---
 title:  "[Level1] 비밀지도"
 
-categories: programmers
+categories: algorithmQuestion
 
 toc: true
 toc_sticky: true

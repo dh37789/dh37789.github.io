@@ -1,7 +1,7 @@
 ---
 title:  "[Silver3] No.09372 상근이의 여행"
 
-categories: baekjoon
+categories: algorithmQuestion
 
 toc: true
 toc_sticky: true

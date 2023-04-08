@@ -1,4 +1,4 @@
-# 侧边栏菜单
+# 메뉴구성도
 menu:
   홈: /
   기록: /archives
@@ -34,8 +34,8 @@ progressBar: true
 # 게시판 모듈
 broadcast:
   enable: true # true，false
-  type: 2
-  text: 一个安静优雅的hexo主题，快速且响应式。 # type为1时有效
+  type: 1
+  text: 즐거운 하루 되세용 ㅎㅎ
 
 # 기사 구성
 # 기사가 너무 깁니다，
@@ -74,7 +74,7 @@ word_count:
 
 # 리워드 요구
 # 보상 유형 설정: 0-보상 끄기, 1-reward:기사에 해당하는 md 파일의 true 속성, 그러면 보상 있음, 2-모든 기사에 보상 있음
-reward_type: 2
+reward_type: 0
 # 보상 wording
 reward_wording: "커피한잔 사주세요~"
 
@@ -177,17 +177,17 @@ gitalk:
   admin: # GitHub ID
 
 # 홈페이지 광고 구성
-ads:
-  ad_1:
-    title:
-    img:
-    url:
-    width:
-  ad_2:
-    title:
-    img:
-    url:
-    width:
+#ads:
+#  ad_1:
+#    title:
+#    img:
+#    url:
+#    width:
+#  ad_2:
+#    title:
+#    img:
+#    url:
+#    width:
 
 # 웹 사이트에 대한 암호화된 액세스，비밀번호는 임의의 문자로 설정 가능
 lock:

@@ -2,14 +2,10 @@
 :
 
 .gitignore,a\5\a5cc2925ca8258af241be7e5b0381edf30266302
-U
-%_posts/algorithm/2022-02-15-eratos.md,4\f\4f0608e58b40ef1301a3f564df7c7957f23b5e6b
 P
  _posts/Java/2022-02-15-printf.md,d\3\d3f981347667452d5030b29aa3b1c765602aa5b8
 P
  _posts/Java/2022-02-15-String.md,2\f\2fd21b070bf939a795b6ef704c2013ff677df21d
-`
-0_posts/algorithmQuestion/2022-02-16-2016-Year.md,c\3\c36acf300e1a9c420f7f0b9ef51ba7a3595b3238
 c
 3_posts/algorithmQuestion/2022-02-16-A-Secret-Map.md,f\9\f92ed96cb98a08687bf528c6b31c355f191c555b
 a
@@ -368,5 +364,3 @@ Y
 )_posts/EffectiveJava/2023-04-06-item20.md,d\c\dce9c2f297215f8ba37a46bbf3dd150be1429d43
 Y
 )_posts/EffectiveJava/2023-04-07-item21.md,9\2\921cc638f30f74c112495050c816bebc5ef3caae
-B
-_layouts/post.html,e\7\e767dacdd408265f818281195cc74a31191ab7cd

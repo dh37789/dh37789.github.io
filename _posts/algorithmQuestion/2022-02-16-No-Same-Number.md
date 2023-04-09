@@ -1,6 +1,7 @@
 ---
 title:  "[Level1] 같은 숫자는 싫어"
 
+layout: post
 categories: algorithmQuestion
 
 toc: true

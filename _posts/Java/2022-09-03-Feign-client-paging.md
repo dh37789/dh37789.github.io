@@ -1,6 +1,7 @@
 ---
 title:  "[Java] Feign Client에서 페이징 처리하기"
 
+layout: post
 categories: Java
 
 toc: true
@@ -21,7 +22,7 @@ Feign Client는 넷플릭스에서 만든 외부 API를 쉽게 호출할수 있�
 ```java
 @FeignClient(value = "회원Client", url = "${client.url}")
 public interface MemberClient {
-    
+
     @PostMapping("/member/{id}")
     void getMember(@PathVariable("id") Long id);
 }
@@ -38,7 +39,7 @@ Feign Client의 자세한 사항은 다음에 알아보도록 하고, 편리한 
 ```java
 @FeignClient(value = "회원Client", url = "${client.url}")
 public interface MemberClient {
-    
+
     @PostMapping("/member")
     Page<MemeberDto> getMemberList(Integer page, Integer size);
 }
@@ -50,11 +51,11 @@ public interface MemberClient {
 @PostMapping("/member")
 public Page<MemeberDto> getMemberList(Pageable pageable) {
     ...
-    return new PageImpl<>(memberList, pageable, totalCount);        
+    return new PageImpl<>(memberList, pageable, totalCount);
 }
 ```
 
-이렇게 pageImpl을 통해 응답값을 전달해도 page객체에 List객체를 담을 수 없다는 Mapping관련 Exception만 발생한다.  
+이렇게 pageImpl을 통해 응답값을 전달해도 page객체에 List객체를 담을 수 없다는 Mapping관련 Exception만 발생한다.
 이렇게 FeignClient는 page관련 객체를 지원하지 않는다.
 
 이를 간단하게 나마 해결 할 수 있는 방법이 있다.
@@ -179,7 +180,7 @@ public class SimplePage<T> implements Page<T> {
 ```java
 @FeignClient(value = "회원Client", url = "${client.url}")
 public interface MemberClient {
-    
+
     @PostMapping("/member")
     SimplePage<MemeberDto> getMemberList(Integer page, Integer size);
 }

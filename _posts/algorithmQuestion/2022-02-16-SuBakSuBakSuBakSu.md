@@ -1,6 +1,7 @@
 ---
 title:  "[Level1] 수박수박수박수박수?"
 
+layout: post
 categories: algorithmQuestion
 
 toc: true

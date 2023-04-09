@@ -1,6 +1,7 @@
 ---
 title:  "[Level1] 콜라츠 추측"
 
+layout: post
 categories: algorithmQuestion
 
 toc: true

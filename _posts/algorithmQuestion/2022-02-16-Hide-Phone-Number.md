@@ -1,6 +1,7 @@
 ---
 title:  "[Level1] 핸드폰 번호 가리기"
 
+layout: post
 categories: algorithmQuestion
 
 toc: true

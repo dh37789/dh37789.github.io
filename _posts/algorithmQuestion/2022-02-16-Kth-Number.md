@@ -1,6 +1,7 @@
 ---
 title:  "[Level1] K번째 수"
 
+layout: post
 categories: algorithmQuestion
 
 toc: true

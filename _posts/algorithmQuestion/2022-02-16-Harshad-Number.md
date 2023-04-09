@@ -1,6 +1,7 @@
 ---
 title:  "[Level1] 하샤드 수"
 
+layout: post
 categories: algorithmQuestion
 
 toc: true

@@ -1,6 +1,7 @@
 ---
 title:  "[Java] HikariCP DB ConnectionTimeout에 대한 Troubleshooting"
 
+layout: post
 categories: Java
 
 toc: true
@@ -13,13 +14,13 @@ last_modified_at: 2022-12-20
 # HikariCP DB ConnectionTimeout에 대한 Troubleshooting
 
 
-업무를 보던중 사내 API서버가 죽는 일이 벌어졌습니다.  
+업무를 보던중 사내 API서버가 죽는 일이 벌어졌습니다.
 다수의 서버가 존재하지만 하나의 서버만 CPU가 급격히 증가하더니 뻗어버렸습니다.
 
 
 > 갑자기 무수한 요청이 오더니 죽어버린 서버..
 
-![Connection Poll]({{site.url}}/assets/image/2022/2022-12/21-trouble001.png)
+![Connection Poll]({{site.url}}/public/image/2022/2022-12/21-trouble001.png)
 
 
 무슨일인고.. 하고 서버로그를 보니, HikariCP가 Connecion을 얻을 수 없어서 timeoutException을 발생시켰다는 로그를 발견했습니다.
@@ -43,7 +44,7 @@ java.sql.SQLTransientConnectionException: HikariPool-1 - Connection is not avail
 
 ## 첫번째 HikariCP 튜닝
 
-처음 이슈트래킹시 한서버에 급격한 요청으로 인해, API 서버의 Connection Pool에서 Connection이 부족해 일어나는 현상으로 파악했습니다.  
+처음 이슈트래킹시 한서버에 급격한 요청으로 인해, API 서버의 Connection Pool에서 Connection이 부족해 일어나는 현상으로 파악했습니다.
 
 물론 다시 생각해보면 위에 생각은 틀린 생각이었습니다.
 
@@ -56,8 +57,8 @@ java.sql.SQLTransientConnectionException: HikariPool-1 - Connection is not avail
 사내 MySql의 표준 `wait_timeout`의 설정은 25초로 HikariCP 설정의 `maxLifetime` 최소값보다 적었기 때문에 항상 HikariCP가 Connection을 반환하기도 전에 MySql에서 반납하는 현상이 벌어졌었습니다.
 
 ```shell
-2022-XX-XX XX:XX:XX.XXX  WARN 12212 --- [n(4)-10.20.2.28] com.zaxxer.hikari.pool.PoolBase          : HikariPool-1 - Failed to validate connection com.mysql.jdbc.JDBC4ReplicationMySQLConnection@1486b850  
-(Communications link failure The last packet successfully received from the server was 23,137 milliseconds ago.  The last packet sent successfully to the server was 0 milliseconds ago.). 
+2022-XX-XX XX:XX:XX.XXX  WARN 12212 --- [n(4)-10.20.2.28] com.zaxxer.hikari.pool.PoolBase          : HikariPool-1 - Failed to validate connection com.mysql.jdbc.JDBC4ReplicationMySQLConnection@1486b850
+(Communications link failure The last packet successfully received from the server was 23,137 milliseconds ago.  The last packet sent successfully to the server was 0 milliseconds ago.).
 Possibly consider using a shorter maxLifetime value.
 ```
 
@@ -68,9 +69,9 @@ Possibly consider using a shorter maxLifetime value.
 ```yaml
 spring:
   datasource:
-    driver-class-name: 
-    url: 
-    username: 
+    driver-class-name:
+    url:
+    username:
     password:
     hikari:
       maximum-pool-size: 20
@@ -86,10 +87,10 @@ spring:
 
 서버가 뻗은 시점에 들어온 요청들을 분석하고 슬로우 쿼리가 발생하는 API에 대해 분석하였습니다.
 
-하지만 쉽지 않았던 이유는 전체적으로 API의 요청에서 응답의 시간과, JOIN도 없는 간단한 쿼리 마저도 3~4초정도 소요가 되었기 때문에 근본적인 슬로우 쿼리를 찾기가 어려웠습니다.  
+하지만 쉽지 않았던 이유는 전체적으로 API의 요청에서 응답의 시간과, JOIN도 없는 간단한 쿼리 마저도 3~4초정도 소요가 되었기 때문에 근본적인 슬로우 쿼리를 찾기가 어려웠습니다.
 DF팀에서 연락이와 과부하 직전에 돌아간 슬로우 쿼리들에 대한 목록을 받았고, 쿼리에 대한 튜닝을 진행하기로 하였습니다.
 
-이어서, DB의 Connection의 누수의 위치를 찾기위해 Hikari 로그를 출력해 파악하기로 하였습니다. 
+이어서, DB의 Connection의 누수의 위치를 찾기위해 Hikari 로그를 출력해 파악하기로 하였습니다.
 
 해당 설정은 아래와 같이 설정하면 확인 할 수 있습니다.
 
@@ -108,7 +109,7 @@ logging에 Hikari에 대한 옵션을 추가할 경우 아래와 같이 HikariCP
 2022-12-22 01:18:08.156 DEBUG 22340 --- [l-1 housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Pool stats (total=5, active=0, idle=5, waiting=0
 ```
 
-위의 설정을 추가한다면, 위에서 볼 수 있듯이 Connection이 추가되거나 닫히는것을 확인 할 수 있습니다. 만약 Added가 발생한 뒤 Closing이 발생하지 않는다면, 해당 커넥션은 실종(?)된거나 다름이 없는 거였습니다.  
+위의 설정을 추가한다면, 위에서 볼 수 있듯이 Connection이 추가되거나 닫히는것을 확인 할 수 있습니다. 만약 Added가 발생한 뒤 Closing이 발생하지 않는다면, 해당 커넥션은 실종(?)된거나 다름이 없는 거였습니다.
 또한 Pool stats 로그에서 Connection의 상태(`total` : 전체, `active` : 사용중, `idel` : 유후, `wating` : 대기중인 요청) 또한 확인이 가능합니다.
 
 하지만 운영서버의 로그는 어마어마하게 올라오기 때문에 모든 커넥션을 확인하기가 어려웠습니다.
@@ -119,12 +120,12 @@ logging에 Hikari에 대한 옵션을 추가할 경우 아래와 같이 HikariCP
 spring:
   datasource:
     hikari:
-      leakDetectionThreshold: 4000 
+      leakDetectionThreshold: 4000
 ```
 
 `leakDetectionThreshold` 설정은 Connection이 leak(누수)가 되는 것을 감지하는 옵션으로 완벽하게 누수현상이라고 할 수는 없지만, 누수로 의심되는 위치를 알려주는 옵션입니다.
 
-예를 들면 아래와 같이 로그가 나타나게 됩니다.  
+예를 들면 아래와 같이 로그가 나타나게 됩니다.
 Connection의 누수가 의심되는 위치를 알려주는 옵션입니다.
 
 ```shell
@@ -171,16 +172,16 @@ java.lang.OutOfMemoryError: GC overhead limit exceeded
 
 해당 에러 로그에 대해 검색해보니 프로세스의 모든 CPU 가용 시간중 **GC를 수집하게 되어 일시중지 하게 되는 시간이 98% 이상**을 사용하게 되고 **실제 Application 작업 시간이 2%미만**이 될 경우 발생한다고 합니다.
 
-![Connection Poll]({{site.url}}/assets/image/2022/2022-12/21-trouble004.png)
+![Connection Poll]({{site.url}}/public/image/2022/2022-12/21-trouble004.png)
 
 
 해당 에러를 찾아 확인해보니 이제야 원인을 잡게된 듯 합니다.
 
 실제로 해당 `OutOfMemoryError` 난 API를 분석해 보니, 회사의 소스라 공개를 할 수 는 없지만 특정 조건의 경우 null이 들어가 약 400,000 건 정도의 데이터가 조회되고 있었고, 조회 해온 데이터를 가지고 반복문을 돌려 2차가공을 진행하는 로직이 있었습니다.
 
-실제로 해당 시각에 DB와 통신한 데이터 통신량을 보니 150MB정도의 어마어마한 양의 데이터를 읽어 들어온 흔적이 있었습니다. 
+실제로 해당 시각에 DB와 통신한 데이터 통신량을 보니 150MB정도의 어마어마한 양의 데이터를 읽어 들어온 흔적이 있었습니다.
 
-![Connection Poll]({{site.url}}/assets/image/2022/2022-12/21-trouble005.png)
+![Connection Poll]({{site.url}}/public/image/2022/2022-12/21-trouble005.png)
 
 결국 근본적인 원인은 슬로우 쿼리가 원인 이었습니다. 해당 null이 들어가게 될 조건을 수정하여 이슈를 해결할 수 있었습니다.
 
@@ -196,7 +197,7 @@ java.lang.OutOfMemoryError: GC overhead limit exceeded
 5. `SQLTransientConnectionException` 발생
 
 
-처음으로 맞이하는 대규모 서비스에서의 에러였습니다.  
+처음으로 맞이하는 대규모 서비스에서의 에러였습니다.
 이상하게 약속이 있는날만 골라서 서버가 터져 많은 애로사항이 있었으나, 좋은 경험 및 공부를 하게된 계기가 된 것 같습니다.
 
 

@@ -1,6 +1,7 @@
 ---
 title: "[Git] Git 메시지 컨벤션이란?"
 
+layout: post
 categories: git
 
 toc: true
@@ -12,8 +13,8 @@ last_modified_at: 2022-04-19
 
 # Git - Commit Message Convention
 
-커밋 메시지를 작성할 때는 원칙을 정하고 일관성있게 정해야 협업간에 쉬운 의사소통이 가능하다. 이번에 기회가 되면 정리하고자 하던 깃 메세지 컨벤션을 정리해 보았다.  
-아직 깃커밋 메시지가 익숙하지 않아 내가 참고하려고 정리를 다시 해보았다.  
+커밋 메시지를 작성할 때는 원칙을 정하고 일관성있게 정해야 협업간에 쉬운 의사소통이 가능하다. 이번에 기회가 되면 정리하고자 하던 깃 메세지 컨벤션을 정리해 보았다.
+아직 깃커밋 메시지가 익숙하지 않아 내가 참고하려고 정리를 다시 해보았다.
 이런 약속은 사소하지만 정말 중요한것 같다.
 
 ## 1. 깃 메시지 구조
@@ -56,9 +57,9 @@ last_modified_at: 2022-04-19
 - 대문자로 작성하며 마침표를 붙이지 않는다.
 - 과거시제보다 현재시제를 사용하며, 명령어로 작성한다.
 
-> Fix: callback error  
-> Refactor: UserController refactoring  
-> Feat : add user login   
+> Fix: callback error
+> Refactor: UserController refactoring
+> Feat : add user login
 
 위와 같은 형식으로 사용하면 된다.
 

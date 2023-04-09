@@ -1,6 +1,7 @@
 ---
 title:  "[Level1] 문자열 내 마음대로 정렬하기"
 
+layout: post
 categories: algorithmQuestion
 
 toc: true

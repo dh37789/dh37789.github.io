@@ -1,6 +1,7 @@
 ---
 title:  "[Level1] 실패율"
 
+layout: post
 categories: algorithmQuestion
 
 toc: true

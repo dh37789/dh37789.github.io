@@ -1,7 +1,7 @@
 ---
 layout: default
 title: 카테고리
-permalink: /category/
+permalink: /category/EffectiveJava
 type: page
 ---
 
@@ -14,6 +14,7 @@ type: page
   <hr/>
   <div class="tags-expo-section">
     {% for tag in site.categories %}
+    {% if tag[0] == "EffectiveJava" %}
     <h2 id="{{ tag[0] | slugify }}">{{ tag[0] }}</h2>
     <ul class="tags-expo-posts">
       {% for post in tag[1] %}
@@ -25,6 +26,7 @@ type: page
       </a>
       {% endfor %}
     </ul>
+    {% endif %}
     {% endfor %}
   </div>
 </div>

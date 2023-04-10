@@ -15,6 +15,50 @@
  * CUSTOM
  */
 
+.tab { white-space: pre; }
+
 /**
  * TAG
  */
+
+.tags-expo :target:before {
+  content: "";
+  display: block;
+  height: 72px;
+  /* fixed header height*/
+  margin: -72px 0 0;
+  /* negative fixed header height */
+}
+@media (min-width: 38em) {
+  .tags-expo .tags-expo-list {
+    font-size: 0.9rem;
+  }
+  .tags-expo .tags-expo-list .post-tag {
+    margin: 0.2em 0.3em;
+  }
+}
+.tags-expo .tags-expo-section ul {
+  list-style-type: circle;
+  list-style-position: inside;
+  padding: 0;
+}
+.tags-expo .tags-expo-section ul li {
+  -webkit-transition: all 0.1s ease-in-out;
+  -moz-transition: all 0.1s ease-in-out;
+  transition: all 0.1s ease-in-out;
+  padding: 0 1rem;
+}
+.tags-expo .tags-expo-section ul li:hover {
+  list-style-type: disc;
+  padding: 0 0.5rem;
+}
+.tags-expo .tags-expo-section a {
+  text-decoration: none;
+}
+.tags-expo .tags-expo-section .post-date {
+  display: inline-block;
+  font-size: 80%;
+  color: #9a9a9a;
+  margin: 0;
+  padding: 0;
+}

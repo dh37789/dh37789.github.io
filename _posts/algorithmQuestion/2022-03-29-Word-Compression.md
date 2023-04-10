@@ -1,6 +1,7 @@
 ---
 title:  "[Level2] 문자열 압축"
 
+layout: post
 categories: algorithmQuestion
 
 toc: true
@@ -27,10 +28,10 @@ last_modified_at: 2022-03-29
 
 ## 풀이
 
-해당 문제는 선형탐색법을 이용해서 풀 수 있다. 1개의 글자부터 시작해서 주어진 글자 수/2 까지 기준 문자를 가지고 압축해 주면 된다.  
+해당 문제는 선형탐색법을 이용해서 풀 수 있다. 1개의 글자부터 시작해서 주어진 글자 수/2 까지 기준 문자를 가지고 압축해 주면 된다.
 왜 주어진 글자 수/2 까지이냐?
 
-![단어 압축하기]({{site.url}}/assets/image/2022/2022-03-29/workCompression.PNG)
+![단어 압축하기]({{site.url}}/public/image/2022/2022-03-29/workCompression.PNG)
 
 왼쪽의 기준문자가 주어진 글자 수/2를 넘어가면 압축을 할 수 없기때문에 비교자체가 무의미하다.
 

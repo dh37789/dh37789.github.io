@@ -1,6 +1,7 @@
 ---
 title:  "[Level1] 이상한 문자 만들기"
 
+layout: post
 categories: algorithmQuestion
 
 toc: true

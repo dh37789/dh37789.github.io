@@ -1,6 +1,7 @@
 ---
 title:  "[Level1] 소수 찾기"
 
+layout: post
 categories: algorithmQuestion
 
 toc: true

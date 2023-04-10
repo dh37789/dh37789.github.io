@@ -1,6 +1,7 @@
 ---
 title:  "[Level1] 자릿수 더하기"
 
+layout: post
 categories: algorithmQuestion
 
 toc: true

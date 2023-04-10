@@ -1,6 +1,7 @@
 ---
 title:  "[Level2] 최대값과 최소값"
 
+layout: post
 categories: algorithmQuestion
 
 toc: true

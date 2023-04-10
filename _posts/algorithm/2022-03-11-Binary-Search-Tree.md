@@ -1,10 +1,8 @@
 ---
 title:  "[Theory] Binary Search Tree"
 
+layout: post
 categories: algorithm
-
-toc: true
-toc_sticky: true
 
 date: 2022-03-11
 last_modified_at: 2022-03-14
@@ -12,7 +10,7 @@ last_modified_at: 2022-03-14
 
 # 이진탐색트리 (Binary Search Tree)
 
-![이진탐색트리1]({{site.url}}/assets/image/2022/2022-03-11/bst001.PNG)
+![이진탐색트리1]({{site.url}}/public/image/2022/2022-03-11/bst001.PNG)
 
 이진탐색트리란 이진 탐색 트리의 성질을 만족하는 이진트리이다.
 - 트리의 각 노드들은 반드시 키 값을 가지고 있고, 키 값은 모두 달라야 한다.

@@ -1,6 +1,7 @@
 ---
 title:  "[Java] 의존성_우아한테크세미나-190620-우아한객체지향 (1)"
 
+layout: post
 categories: Java
 
 toc: true
@@ -14,7 +15,7 @@ last_modified_at: 2022-02-21
 
 ## 의존성
 
-![의존성]({{site.url}}/assets/image/2022/2022-02-21/dependency_a.PNG)
+![의존성]({{site.url}}/public/image/2022/2022-02-21/dependency_a.PNG)
 
 - A가 B를 의존할 경우 B가 변경 될 경우 A도 변경 될 수 있다.
 
@@ -48,7 +49,7 @@ B의 객체가 변경 될 경우 A도 같이 변경이 된다.
 
 ```java
 class A extends B{
-    
+
 }
 ```
 
@@ -58,11 +59,11 @@ B객체의 구현체를 A객체에서 구현한다.
 
 ```java
 class A implements B {
-    
+
 }
 ```
 
-*상속관계와 실체화관계의 차이는 상속관계는 부모 객체가 변경될시 자식 객체가 같이 변경되지만  
+*상속관계와 실체화관계의 차이는 상속관계는 부모 객체가 변경될시 자식 객체가 같이 변경되지만
 실체화 관계는 부모 객체의 코드가 변경 될 경우 자식 객체가 변경된다.
 
 ## 패키지 의존성
@@ -81,42 +82,42 @@ class A implements B {
 
 ### ex) 관계에는 방향성이 필요하다.
 
-![exam1]({{site.url}}/assets/image/2022/2022-02-21/example_2022_02_21_001.PNG )
+![exam1]({{site.url}}/public/image/2022/2022-02-21/example_2022_02_21_001.PNG )
 
 ### 관계의 방향 = 협력의 방향 = 의존성의 방향
 
-![exam2]({{site.url}}/assets/image/2022/2022-02-21/example_2022_02_21_002.PNG )
+![exam2]({{site.url}}/public/image/2022/2022-02-21/example_2022_02_21_002.PNG )
 
-### 관계의 종류 결정하기 
+### 관계의 종류 결정하기
 
 - 연관관계 : 협력을 위해 필요한 **영구적인** 탐색구조 (객체참조)
 
-![exam3]({{site.url}}/assets/image/2022/2022-02-21/example_2022_02_21_003.PNG )
+![exam3]({{site.url}}/public/image/2022/2022-02-21/example_2022_02_21_003.PNG )
 
 - 의존관계 : 협력을 위해 **일시적으로** 필요한 의존성 (파라미터, 리턴타입, 자연변수)
 
-![exam4]({{site.url}}/assets/image/2022/2022-02-21/example_2022_02_21_004.PNG )
+![exam4]({{site.url}}/public/image/2022/2022-02-21/example_2022_02_21_004.PNG )
 
 ## 연관관계 = 탐색가능성(navigability)
 
-![연관관계1]({{site.url}}/assets/image/2022/2022-02-21/dependency_b.PNG )
+![연관관계1]({{site.url}}/public/image/2022/2022-02-21/dependency_b.PNG )
 
 - Order에서 OrderLineItem으로 탐색 가능
 - 즉, Order가 뭔지 알면 Order를 통해 원하는 OrderLineItem을 찾을 수 있다.
 
-![연관관계2]({{site.url}}/assets/image/2022/2022-02-21/dependency_c.PNG )
+![연관관계2]({{site.url}}/public/image/2022/2022-02-21/dependency_c.PNG )
 
 - 두 객체 사이에 협력이 필요하고 두 객체의 관계가 영구적이라면 연관관계를 이용해 탐색 경로 구현
 
 ```java
 class Order {
     private List<OrderLineItem> orderLineItem;
-    
+
     public void place(){
         validate();
         ordered();
     }
-    
+
     private void validate(){
       ...
       // 연관관계를 이용해서 협력
@@ -129,7 +130,7 @@ class Order {
 
 ## 해당 예제 구현하기
 
-![exam5]({{site.url}}/assets/image/2022/2022-02-21/example_2022_02_21_005.PNG )
+![exam5]({{site.url}}/public/image/2022/2022-02-21/example_2022_02_21_005.PNG )
 
 
 1. Shop & OrderLineItem의 연관관계를 연결한다.
@@ -152,14 +153,14 @@ public class Order {
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name="ORDER_ID")
     private List<OrderLineItem> orderLineItems = new ArrayList<>();
-    
+
     ...
-  
+
     public void place() {
         validate();
         ordered();
     }
-    
+
     private void validate() {
     }
     private void ordered() {
@@ -172,7 +173,7 @@ public class Order {
 - (Order -> Shop)
   1. isOpen();
   2. isValidAmount();
-  
+
 Order
 ```java
 public class Order {
@@ -180,10 +181,10 @@ public class Order {
         validate();
         ordered();
     }
-    
+
     private void validate() {
         if (orderLineItem.isEmpty()) {
-            throw new IllegalStateException("주문 항목이 비어 있습니다.");    
+            throw new IllegalStateException("주문 항목이 비어 있습니다.");
         }
         if (!shop.isOpen()) {
             throw new IllegalStateException("가게가 영업중이 아닙니다.");
@@ -207,7 +208,7 @@ public class Shop {
     public boolean isOpen(){
         return this.open;
     }
-    
+
     public boolean isValidOrderAmount(Money amount) {
         return amount.isGreaterThanOrEqual(minOrderAmount);
     }
@@ -309,14 +310,14 @@ public class OptionSpecification {
 
 ## 레이어 아키텍처 (Layered Architecture)
 
-위의 해당 예제는 레이어 아키텍처 중 **Domain의 과정**에 들어가는 과정이다.  
-영역의 관계를 정의하는 단계라고 보면 된다.  
+위의 해당 예제는 레이어 아키텍처 중 **Domain의 과정**에 들어가는 과정이다.
+영역의 관계를 정의하는 단계라고 보면 된다.
 
-![rayer1]({{site.url}}/assets/image/2022/2022-03-02/rayer001.PNG )
+![rayer1]({{site.url}}/public/image/2022/2022-03-02/rayer001.PNG )
 
 아래의 소스와 같이 Domain과정에서 벗어난 request를 받거나 DB에 접근하는 로직의 구현은 Service 레이어에서 진행한다.
 
-![rayer2]({{site.url}}/assets/image/2022/2022-03-02/rayer002.PNG )
+![rayer2]({{site.url}}/public/image/2022/2022-03-02/rayer002.PNG )
 
 
 

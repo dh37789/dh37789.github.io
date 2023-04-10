@@ -1,6 +1,7 @@
 ---
 title:  "[Level1] 문자열 다루기 기본"
 
+layout: post
 categories: algorithmQuestion
 
 toc: true

@@ -30,7 +30,7 @@
       <nav class="content-ul">
         {% for category in site.categories %}
         <a href="{{ root_url }}/{{ site.category_dir }}{{ category | first }}" class="sidebar-nav-item pl-3rem">
-          <span class="name">{{ category | first }}</span>
+          <span class="name"><span class="tab">&#9;</span>{{ category | first }}</span>
           <span class="badge sidebar-nav-badge">{{ category | last | size }}</span>
         </a>
         {% endfor %}

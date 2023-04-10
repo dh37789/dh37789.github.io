@@ -1,6 +1,7 @@
 ---
 title:  "[Level1] 두 정수 사이의 합"
 
+layout: post
 categories: algorithmQuestion
 
 toc: true

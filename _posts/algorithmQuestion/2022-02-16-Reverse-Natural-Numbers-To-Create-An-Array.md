@@ -1,6 +1,7 @@
 ---
 title:  "[Level1] 자연수 뒤집어 배열 만들기"
 
+layout: post
 categories: algorithmQuestion
 
 toc: true

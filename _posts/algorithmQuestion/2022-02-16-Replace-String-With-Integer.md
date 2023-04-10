@@ -1,6 +1,7 @@
 ---
 title:  "[Level1] 문자열을 숫자로 바꾸기"
 
+layout: post
 categories: algorithmQuestion
 
 toc: true

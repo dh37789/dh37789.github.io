@@ -1,6 +1,7 @@
 ---
 title: "[DesignPattern] 추상 팩토리(ABSTRACT FACTORY)"
 
+layout: post
 categories: DesignPattern
 
 toc: true
@@ -26,7 +27,7 @@ last_modified_at: 2022-04-22
 
 ## 구조
 
-![추상팩토리 구조]({{site.url}}/assets/image/2022/2022-04-22/abstract.png)
+![추상팩토리 구조]({{site.url}}/public/image/2022/2022-04-22/abstract.png)
 
 - AbstractFactory : 제품에 대한 객체를 생성하는 인터페이스를 정의합니다.
 - ConcreteFactory : 구체적인 제품에 대한 객체를 생성하는 구현을 담당합니다.
@@ -64,7 +65,7 @@ last_modified_at: 2022-04-22
 
 ### 1. 하나의 추상팩토리를 정의합니다.
 
-제품에 대한 추상 팩토리 인터페이스를 정의합니다.  
+제품에 대한 추상 팩토리 인터페이스를 정의합니다.
 여기서는 노트북과, 텔레비젼에 대한 제품을 공통적인 집합 객체로 묶었습니다.
 
 - 냉장고와 노트북 제품에 대한 추상팩토리 정의
@@ -99,7 +100,7 @@ public interface Television {
 
 ### 2. 제품을 생성합니다.
 
-AbstractFactory, Notebook, Television 인터페이스를 상속받아 브랜드별 제품객체를 구현합니다. 
+AbstractFactory, Notebook, Television 인터페이스를 상속받아 브랜드별 제품객체를 구현합니다.
 
 - LG 제품 구현체
 
@@ -190,7 +191,7 @@ public class SamsungTelevision implements Television {
 
 ### 3. 정의한 팩토리들을 출력합니다.
 
-AbstractFactory 인터페이스의 구현체에 대한 인스턴스를 각각 LG, SAMSUNG의 String 파라미터를 받아 각기 다른 브랜드를 인스턴스화 합니다. 
+AbstractFactory 인터페이스의 구현체에 대한 인스턴스를 각각 LG, SAMSUNG의 String 파라미터를 받아 각기 다른 브랜드를 인스턴스화 합니다.
 
 ```java
 public class Client {
@@ -239,7 +240,7 @@ SAMSUNG TELEVISION
 
 ## 정리
 
-간단하게 정리하자면 추상 팩토리 패턴은 **관련된 객체들의 집합(군)을 형성** 할때 사용하는 디자인 패턴으로 객체들의 집합을 추상화하고 클라이언트는 추상화한 추상 팩토리 인터페이스를 제공받는다.  
+간단하게 정리하자면 추상 팩토리 패턴은 **관련된 객체들의 집합(군)을 형성** 할때 사용하는 디자인 패턴으로 객체들의 집합을 추상화하고 클라이언트는 추상화한 추상 팩토리 인터페이스를 제공받는다.
 
 제공받은 추상 팩토리 인터페이스에 구현체를 달리해 일관되게 객체를 생성 할 수 있게된다.
 

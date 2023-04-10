@@ -1,6 +1,7 @@
 ---
 title:  "[Level1] 직사각형 별찍기"
 
+layout: post
 categories: algorithmQuestion
 
 toc: true

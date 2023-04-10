@@ -1,6 +1,7 @@
 ---
 title:  "[Java] Database Lock을 이용해 동시성 제어하기"
 
+layout: post
 categories: Java
 
 toc: true
@@ -35,12 +36,12 @@ Application에는 이러한 상태를 제어하기 위한 Lock을 지원한다.
 
 ### 공유 락 (Shared Lock)
 
-공유 락은 **데이터를 변경하지 않는 읽기 명령에 대해 주어지는 락**으로, `Read Lock` 또는 `S Lock` 으로 표기하기도 한다.  
+공유 락은 **데이터를 변경하지 않는 읽기 명령에 대해 주어지는 락**으로, `Read Lock` 또는 `S Lock` 으로 표기하기도 한다.
 읽기의 경우 동시에 데이터에 접근해도 데이터의 일관성에 영향을 주지 않기 때문에, 공유락끼리는 동시에 접근이 가능하다.
 
 ### 베타 락 (Exclusive Lock)
 
-베타 락은 **데이터에 변경을 가하는 쓰기 명령에 대해 주어지는 락**으로 `Write Lock` 또는 `X Lock` 으로 표기하기도 한다.  
+베타 락은 **데이터에 변경을 가하는 쓰기 명령에 대해 주어지는 락**으로 `Write Lock` 또는 `X Lock` 으로 표기하기도 한다.
 Lock이 걸릴 경우 Lock이 해제될 때까지 SELECT를 포함한 모든 트랜잭션은 해당 데이터에 접근 할 수 없다.
 
 
@@ -132,7 +133,7 @@ public void decrease(Long id, Long quantity) {
 @BeforeEach
 public void before() {
     Stock stock = new Stock(1L, 100L);
-    
+
     stockRepository.saveAndFlush(stock);
 }
 
@@ -167,7 +168,7 @@ void 동시에_100번_요청() throws InterruptedException {
 `ExecutorService`는 스레드를 생성하여 병렬처리 하는 방법이다. 32개의 스레드를 생성하여, 100개의 재고를 만들고 재고 감소 로직에 한번에 접근해보았다 결과는 어떻게 되었을까?
 
 
-![Database Lock]({{site.url}}/assets/image/2023/2023-03/26-con001.png)
+![Database Lock]({{site.url}}/public/image/2023/2023-03/26-con001.png)
 
 0이되어야 할 재고가 96개나 남아있었다!
 
@@ -185,10 +186,10 @@ Repository의 쿼리 메소드에 `@Lock` Annotation을 추가해 주면 된다.
 `@Lock` 어노테이션은 세가지가 있다.
 
 
-- PESSIMISTIC_WRITE 
+- PESSIMISTIC_WRITE
 
-비관적락을 적용한다고 하면 일반적으로 해당 옵션을 준다고 생각하면 된다.  
-해당 옵션을 적용한 뒤 나가는 쿼리문을 확인하면 `SELECT ... FOR UPDATE`의 쿼리문이 나가는것을 볼 수 있다.  
+비관적락을 적용한다고 하면 일반적으로 해당 옵션을 준다고 생각하면 된다.
+해당 옵션을 적용한 뒤 나가는 쿼리문을 확인하면 `SELECT ... FOR UPDATE`의 쿼리문이 나가는것을 볼 수 있다.
 비관적 Lock, 쓰기 Lock이 적용된다.
 
 - PESSIMISTIC_READ
@@ -199,7 +200,7 @@ Repository의 쿼리 메소드에 `@Lock` Annotation을 추가해 주면 된다.
 
 - PESSIMISTIC_FORCE_INCREMENT
 
-비관적 락중에 버전관리를 하는 옵션이다.  
+비관적 락중에 버전관리를 하는 옵션이다.
 비관적 락을 적용하지만, 버전정보를 강제적으로 증가시킨다.
 
 
@@ -227,7 +228,7 @@ public interface StockRepository extends JpaRepository<Stock, Long> {
 @BeforeEach
 public void before() {
     Stock stock = new Stock(1L, 100L);
-    
+
     stockRepository.saveAndFlush(stock);
 }
 
@@ -261,7 +262,7 @@ void 동시에_100번_요청_by_PessimisticLock() throws InterruptedException {
 
 정상적으로 테스트가 성공하는것을 볼 수 있다.
 
-![Database Lock]({{site.url}}/assets/image/2023/2023-03/26-con002.png)
+![Database Lock]({{site.url}}/public/image/2023/2023-03/26-con002.png)
 
 QueryDsl의 경우 아래와 같이 `.setLockMode(LockModeType.PESSIMISTIC_WRITE)` 의 메소드 체이닝을 추가해주면 된다.
 
@@ -380,7 +381,7 @@ public void decrease(Long id, Long quantity) throws InterruptedException {
 @BeforeEach
 public void before() {
     Stock stock = new Stock(1L, 100L);
-    
+
     stockRepository.saveAndFlush(stock);
 }
 
@@ -416,7 +417,7 @@ void 동시에_100번_요청_by_OptimisticLock() throws InterruptedException {
 
 테스트가 성공하는 것을 볼 수 있다.
 
-![Database Lock]({{site.url}}/assets/image/2023/2023-03/26-con003.png)
+![Database Lock]({{site.url}}/public/image/2023/2023-03/26-con003.png)
 
 
 QueryDsl의 경우 아래와 같이 `.setLockMode(LockModeType.OPTIMISTIC)` 의 메소드 체이닝을 추가해주면 된다.

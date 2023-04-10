@@ -1,6 +1,7 @@
 ---
 title:  "[Level1] 완주하지 못한 선수"
 
+layout: post
 categories: algorithmQuestion
 
 toc: true

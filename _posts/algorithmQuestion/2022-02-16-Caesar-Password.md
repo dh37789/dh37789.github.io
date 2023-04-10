@@ -1,6 +1,7 @@
 ---
 title:  "[Level1] 시저암호"
 
+layout: post
 categories: algorithmQuestion
 
 toc: true

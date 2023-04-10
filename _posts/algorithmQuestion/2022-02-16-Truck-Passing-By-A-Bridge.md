@@ -1,6 +1,7 @@
 ---
 title:  "[Level2] 다리를 지나가는 트럭"
 
+layout: post
 categories: algorithmQuestion
 
 toc: true

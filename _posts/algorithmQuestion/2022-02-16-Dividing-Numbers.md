@@ -1,6 +1,7 @@
 ---
 title:  "[Level1] 나누어 떨어지는 숫자"
 
+layout: post
 categories: algorithmQuestion
 
 toc: true

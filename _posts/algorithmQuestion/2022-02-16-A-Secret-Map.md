@@ -1,6 +1,7 @@
 ---
 title:  "[Level1] 비밀지도"
 
+layout: post
 categories: algorithmQuestion
 
 toc: true

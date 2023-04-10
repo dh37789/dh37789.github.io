@@ -20,7 +20,6 @@
 /**
  * TAG
  */
-
 .tags-expo :target:before {
   content: "";
   display: block;
@@ -61,4 +60,27 @@
   color: #9a9a9a;
   margin: 0;
   padding: 0;
+}
+.post-tag {
+  display: inline-block;
+  background: rgb(252 255 48 / 24%);
+  padding: 0 .5rem;
+  margin-right: .5rem;
+  border-radius: 4px;
+  color: #ababab;
+  font-family: "PT Sans",Helvetica,Arial,sans-serif;
+  font-size: 90%;
+  -webkit-transition: all 0.1s ease-in-out;
+  -moz-transition: all 0.1s ease-in-out;
+  transition: all 0.1s ease-in-out
+}
+.post-tag:before {
+  content: "\f02b";
+  font-family: FontAwesome;
+  padding-right: .5em
+}
+.post-tag:hover {
+  text-decoration: none;
+  background: #ababab;
+  color: #fff
 }

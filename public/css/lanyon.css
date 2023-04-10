@@ -34,6 +34,8 @@
  * Update the foundational and global aspects of the page.
  */
 
+@import url('https://cdn.rawgit.com/moonspam/NanumSquare/master/nanumsquare.css');
+
 /* Prevent scroll on narrow devices */
 @font-face {
   font-family: 'NanumSquareNeo-Variable';
@@ -54,11 +56,11 @@ body {
 }
 
 html {
-  font-family: "NanumSquareNeo-Variable";
+  font-family: "NanumSquare";
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: "NanumSquareNeo-Variable";
+  font-family: "NanumSquare";
   font-weight: 400;
   color: #313131;
   letter-spacing: -.025rem;
@@ -161,7 +163,7 @@ h1, h2, h3, h4, h5, h6 {
   width: 14rem;
   visibility: hidden;
   overflow-y: auto;
-  font-family: "NanumSquareNeo-Variable";
+  font-family: "NanumSquare";
   font-size: .875rem; /* 15px */
   color: rgba(255,255,255,.6);
   background-color: #202020;
@@ -321,6 +323,7 @@ a.sidebar-nav-item:focus {
 .page,
 .post {
   margin-bottom: 4em;
+  font-size: 0.9em;
 }
 
 /* Blog post or page title */
@@ -331,7 +334,7 @@ a.sidebar-nav-item:focus {
 }
 .page-title,
 .post-title {
-  font-family: "NanumSquareNeo-Variable";
+  font-family: "NanumSquareAc";
   font-weight: 700;
   margin-top: 0;
   margin-bottom: 0.4em;
@@ -382,7 +385,7 @@ a.sidebar-nav-item:focus {
   overflow: hidden; /* clearfix */
   margin-left: -1rem;
   margin-right: -1rem;
-  font-family: "NanumSquareNeo-Variable";
+  font-family: "NanumSquare";
   color: #ccc;
   text-align: center;
 }

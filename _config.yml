@@ -6,6 +6,7 @@ url:                 https://dh37789.github.io
 baseurl:             ''
 paginate:            5
 permalink:           pretty
+github:              https://github.com/dh37789
 
 # About/contact
 author:

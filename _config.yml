@@ -19,6 +19,6 @@ plugins:
 
 # Custom vars
 version:             1.1.0
-google_analytics_id: #UA-XXXX-Y
+google_analytics_id: G-B4JZGH42KG
 
 category_dir: category/

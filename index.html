@@ -14,7 +14,7 @@ title: Home
 
     <span class="post-date">{{ post.date | date_to_string }}&nbsp;&nbsp;<a class="post-tag">{{ post.categories }}</a></span>
     <article>
-      {{ post.content | truncatewords: 50 | markdownify }}
+      {{ post.content | truncatewords: 45 | markdownify }}
     <article>
     <div class="post-more">
       {% if site.disqus_short_name %}

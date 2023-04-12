@@ -323,7 +323,7 @@ a.sidebar-nav-item:focus {
 .page,
 .post {
   margin-bottom: 4em;
-  font-size: 0.9em;
+  font-size: 0.8em;
 }
 
 /* Blog post or page title */
@@ -338,6 +338,11 @@ a.sidebar-nav-item:focus {
   font-weight: 700;
   margin-top: 0;
   margin-bottom: 0.4em;
+}
+
+.post-list {
+  font-size: 0.8em;
+  margin-bottom: 4px;
 }
 
 /* Meta data line below post title */

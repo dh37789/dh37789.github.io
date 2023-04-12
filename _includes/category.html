@@ -1,19 +1,25 @@
-{% capture categories %}
-{% if post %}
-{% for category in post.categories %}
-<a href="{{ root_url }}/{{ site.category_dir }}#{{ category }}" title="Category: {{ category }}" rel="category"></a>{% unless forloop.last %}&nbsp;{% endunless %}
-{% endfor %}
-{% else %}
-{% for category in page.categories %}
-<a href="{{ root_url }}/{{ site.category_dir }}#{{ category }}" title="Category: {{ category }}" rel="category">{{ category | join: "/" }}</a>{% unless forloop.last %}&nbsp;{% endunless %}
-{% endfor %}
-{% endif %}
-{% endcapture %}
-{% capture category_size %}{{ categories | strip_newlines | replace: ' ', '' | size }}{% endcapture %}
-{% unless category_size == '0' %}
-<!-- <span class="point">•</span> -->
-<span class="categories">
-  <i class="fa fa-th-list"></i>{{ categories }}
-  <!-- <span class="point">•</span> -->
-</span>
-{% endunless %}
+<div class="tags-expo">
+  <div class="tags-expo-list">
+    {% for tag in site.categories %}
+    <a href="#{{ tag[0] | slugify }}" class="post-tag">{{ tag[0] }}</a>
+    {% endfor %}
+  </div>
+  <hr/>
+  <div class="tags-expo-section">
+    {% for tag in site.categories %}
+    {% if tag[0] == page.category %}
+    <h2 id="{{ tag[0] | slugify }}">{{ page.subject }}</h2>
+    <ul class="tags-expo-posts">
+      {% for post in tag[1] %}
+      <a class="post-title" href="{{ site.baseurl }}{{ post.url }}">
+        <li class="post-list">
+          {{ post.title }}
+          <small class="post-date">{{ post.date | date_to_string }}</small>
+        </li>
+      </a>
+      {% endfor %}
+    </ul>
+    {% endif %}
+    {% endfor %}
+  </div>
+</div>

@@ -24,3 +24,5 @@ version:             1.1.0
 google_analytics_id: G-B4JZGH42KG
 
 category_dir: category/
+
+permalink: /:categories/:title/

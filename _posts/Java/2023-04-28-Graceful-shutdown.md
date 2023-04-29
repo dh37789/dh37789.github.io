@@ -39,8 +39,8 @@ server:
 그러면 아래의 Console에 graceful shutdown을 통해 서버가 Stop되었다는 로그가 출력된다.
 
 ```shell
-2023-04-28T22:45:12.152+09:00  INFO 28976 --- [ionShutdownHook] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
-2023-04-28T22:45:12.171+09:00  INFO 28976 --- [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+[ionShutdownHook] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+[tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
 ```
 
 
@@ -71,10 +71,10 @@ public class GracefulController {
 이후 `gracefulTest out`이 출력된 후 서버가 종료된것을 볼 수있다.
 
 ```shell
-2023-04-28T23:14:20.497+09:00  INFO 13340 --- [nio-8080-exec-2] c.e.d.g.controller.GracefulController    : gracefulTest in
-2023-04-28T23:14:24.037+09:00  INFO 13340 --- [ionShutdownHook] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
-2023-04-28T23:14:30.508+09:00  INFO 13340 --- [nio-8080-exec-2] c.e.d.g.controller.GracefulController    : gracefulTest out
-2023-04-28T23:14:30.538+09:00  INFO 13340 --- [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+[nio-8080-exec-2] c.e.d.g.controller.GracefulController    : gracefulTest in
+[ionShutdownHook] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+[nio-8080-exec-2] c.e.d.g.controller.GracefulController    : gracefulTest out
+[tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
 ```
 
 만약 여기서 graceful shutdown이 request를 종료하는동안 새로운 request가 들어온다면 어떻게 될까?
@@ -218,14 +218,14 @@ public class GracefulShutdownListener implements ApplicationListener<ContextClos
 `GracefulShutdownListener` 구현 클래스에서 동일한 결과의 logging을 확인할 수 있다.
 
 ```shell
-2023-04-29T01:01:09.811+09:00  INFO 33244 --- [nio-8080-exec-5] c.e.d.g.controller.GracefulController    : gracefulTest in
-2023-04-29T01:01:11.312+09:00  INFO 33244 --- [ionShutdownHook] c.e.d.g.l.GracefulShutdownListener       : Commencing graceful shutdown. Waiting for active requests to complete
-2023-04-29T01:01:29.814+09:00  INFO 33244 --- [nio-8080-exec-5] c.e.d.g.controller.GracefulController    : gracefulTest out
-2023-04-29T01:01:29.847+09:00  INFO 33244 --- [ionShutdownHook] c.e.d.g.l.GracefulShutdownListener       : Graceful shutdown complete
+[nio-8080-exec-5] c.e.d.g.controller.GracefulController    : gracefulTest in
+[ionShutdownHook] c.e.d.g.l.GracefulShutdownListener       : Commencing graceful shutdown. Waiting for active requests to complete
+[nio-8080-exec-5] c.e.d.g.controller.GracefulController    : gracefulTest out
+[ionShutdownHook] c.e.d.g.l.GracefulShutdownListener       : Graceful shutdown complete
 ```
 
 ### 참고 사이트
 
-https://blog.naver.com/PostView.nhn?blogId=debugrammer&logNo=221710570569
+[https://blog.naver.com/PostView.nhn?blogId=debugrammer&logNo=221710570569](https://blog.naver.com/PostView.nhn?blogId=debugrammer&logNo=221710570569)
 
 

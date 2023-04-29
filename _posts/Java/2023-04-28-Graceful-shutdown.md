@@ -226,6 +226,6 @@ public class GracefulShutdownListener implements ApplicationListener<ContextClos
 
 ### 참고 사이트
 
-https://blog.naver.com/PostView.nhn?blogId=debugrammer&logNo=221710570569
+[https://blog.naver.com/PostView.nhn?blogId=debugrammer&logNo=221710570569](https://blog.naver.com/PostView.nhn?blogId=debugrammer&logNo=221710570569)
 
 

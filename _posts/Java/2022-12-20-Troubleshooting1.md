@@ -46,7 +46,7 @@ java.sql.SQLTransientConnectionException: HikariPool-1 - Connection is not avail
 
 처음 이슈트래킹시 한서버에 급격한 요청으로 인해, API 서버의 Connection Pool에서 Connection이 부족해 일어나는 현상으로 파악했습니다.
 
-물론 다시 생각해보면 위에 생각은 틀린 생각이었습니다.
+그러나 다시 생각해보면 위에 생각은 틀린 생각이었습니다.
 
 수많은 요청이 들어와 Connection이 부족하게 된다면 다른 서버에도 영향이 갔을것인데 **하나의 서버에만 문제가 생겼다는 점**과 그렇다고 또 **요청의 수가 서버가 죽을정도로 많지는 않았다는 점**
 

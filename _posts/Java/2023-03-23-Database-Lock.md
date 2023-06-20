@@ -8,7 +8,7 @@ toc: true
 toc_sticky: true
 
 date: 2023-03-23
-last_modified_at: 2022-03-23
+last_modified_at: 2023-03-23
 ---
 
 # Database Lock을 이용해 동시성 제어하기

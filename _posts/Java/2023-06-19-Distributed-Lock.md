@@ -117,21 +117,7 @@ public class Stock {
 }
 ```
 
-> Facade 패턴 : 하위 시스템을 보다 쉽게 사용할 수 있게 해주는 고급 인터페이스이다.<br>
-> wiki : [Facade 패턴 Wiki](https://ko.wikipedia.org/wiki/%ED%8D%BC%EC%82%AC%EB%93%9C_%ED%8C%A8%ED%84%B4)
-
-Redisson을 사용하기 위해 RedissonClient의 의존성을 추가하고 다음과 같은 로직을 추가한다.
-
-`RLock getLock(String name)`을 통해 매개변수로 전달받은 key값의 락을 흭득하며, <br>
-`boolean tryLock(long waitTime, long leaseTime, TimeUnit unit)`을 통해 Lock의 획득을 시도한다.
-
-- long waitTime: 락 획득을 기다리는시간
-- long leaseTime: RLock획득 후 락이 만료되는 시간을 말한다.
-- TimeUnit unit: 앞의 적시한 시간의 단위를 말한다.
-
-[RLock](https://www.javadoc.io/doc/org.redisson/redisson/2.8.2/org/redisson/api/RLock.html)이란 Redisson에서 정의한 Lock 객체를 말한다.
-
-#### Facade
+#### RedissonLockStockFacade
 
 ```java
 @Component
@@ -167,6 +153,21 @@ public class RedissonLockStockFacade {
 }
 ```
 
+> Facade 패턴 : 하위 시스템을 보다 쉽게 사용할 수 있게 해주는 고급 인터페이스이다.<br>
+> wiki : [Facade 패턴 Wiki](https://ko.wikipedia.org/wiki/%ED%8D%BC%EC%82%AC%EB%93%9C_%ED%8C%A8%ED%84%B4)
+
+Redisson을 사용하기 위해 RedissonClient의 의존성을 추가하고 다음과 같은 로직을 추가한다.
+
+`RLock getLock(String name)`을 통해 매개변수로 전달받은 key값의 락을 흭득하며, <br>
+`boolean tryLock(long waitTime, long leaseTime, TimeUnit unit)`을 통해 Lock의 획득을 시도한다.
+
+- long waitTime: 락 획득을 기다리는시간
+- long leaseTime: RLock획득 후 락이 만료되는 시간을 말한다.
+- TimeUnit unit: 앞의 적시한 시간의 단위를 말한다.
+
+[RLock](https://www.javadoc.io/doc/org.redisson/redisson/2.8.2/org/redisson/api/RLock.html)이란 Redisson에서 정의한 Lock 객체를 말한다.
+
+
 이제 테스트를 진행해보자.
 
 ```java
@@ -198,8 +199,12 @@ void 동시에_100번_요청_by_RedissonLock() throws InterruptedException {
 }
 ```
 
-테스트가 성공하는 걸 볼 수 있었다.
+테스트는 ExcutorService를 호출하여 32개의 쓰레드풀을 생성하여 병렬처리로 진행하였다.
+
+재고의 수를 100개를 만들고 감소 로직을 100번 병렬처리로 돌려 정상적으로 감소가 되는지 확인하였다.
 
 ![테스트]({{site.url}}/public/image/2023/2023-06/19-lock002.png)
+
+테스트가 성공하는 걸 볼 수 있었다.
 
 참고 : [whats-a-distributed-lock-and-why-use-it - stackoverflow](https://stackoverflow.com/questions/11999324/whats-a-distributed-lock-and-why-use-it)

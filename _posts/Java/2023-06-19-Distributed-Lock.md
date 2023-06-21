@@ -48,9 +48,11 @@ Lettuce는 스핀락을 기반으로 구현된 Redis 라이브러리이다.
 
 ## Redisson
 
-스핀락의 무한 대기에 및 순회하는 동안 계속 Redis에 요청이 가게 되니 부하가 가게 될것이라, Redisson에서는 다른 방법을 도입했다.
+스핀락의 무한 대기에 및 순회하는 동안 계속 Redis에 요청이 가게 되니 부하가 가게 될 것이라, Redisson에서는 다른 방법을 도입했다.
 
 Pub / Sub (발행 / 구독) 모델을 도입해 락을 관리하도록 하였다.
+
+![Pub/Sub]({{site.url}}/public/image/2023/2023-06/19-lock003.png)
 
 계속해서 대기하는 것이 아니라, redis의 pub/sub을 이용해 이벤트가 왔을때 락의 획득 시도를 수행하도록 작성되었다.
 
@@ -71,7 +73,7 @@ docker run --name redis -d -p 6379:6379 redis
 
 redisson을 사용할 수 있도록 gradle에 추가해준다.
 
-```java
+```groovy
 dependencies {
     // redis
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'

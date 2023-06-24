@@ -1,5 +1,5 @@
 ---
-title:  "[Java] Java 직렬화(serialize)/역직렬화(deserialize) 이야기"
+title:  "[Java] Java의 직렬화(serialize)/역직렬화(deserialize)"
 
 layout: post
 categories: Java
@@ -11,7 +11,7 @@ date: 2023-06-19
 last_modified_at: 2023-06-19
 ---
 
-자바의 역직렬화(deserialize) 이야기에 앞서 직렬화(serialize)와 역직렬화(deserialize)를 간단하게 톺아보고 가도록 하자.
+자바에서 직렬화(serialize)와 역직렬화(deserialize)에 대해 간단하게 톺아보고 가도록 하자.
 
 
 ## 직렬화 (serialize)

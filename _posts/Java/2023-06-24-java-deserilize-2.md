@@ -37,7 +37,14 @@ public class Result {
 
 `ResponseEntity\<List\<MemberDto\>\>` 와 같은 응답 객체가 아닌 위의 Result 객체와 같은 Custom 응답 객체에 `List\<?\>`의 와일드카드 타입의 List Collection 객체에 데이터를 넣어 응답을 가져올 때 발생했다.
 
-B프로젝트에서 데이터를 가져온 뒤 가져온 MemberDto의 가공을 위해 MemberDto객체로 캐스팅을 진행하고 가공을 하려던 차에 아래의 예외가 발생했다.
+B프로젝트에서 데이터를 가져온 뒤 가져온 `MemberDto`의 가공을 위해 `MemberDto`객체로 캐스팅을 진행하고 가공을 하려던 차에 아래의 예외가 발생했다.
+
+```java
+List<?> data = result.getData();
+List<MemberDto> members = data.stream()
+        .map(member -> (MemberDto) member)
+        .collect(Collectors.toList());
+```
 
 ```shell
 org.springframework.web.util.NestedServletException: Request processing failed; nested exception is java.lang.ClassCastException: Cannot cast java.util.LinkedHashMap to kr.api.model.payment.PaymentForPersonal

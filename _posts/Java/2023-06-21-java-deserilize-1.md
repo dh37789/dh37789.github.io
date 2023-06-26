@@ -129,7 +129,7 @@ public class MemberDto {
 
 `ObjectMapper` 객체에는 deserialize를 지원하는 메소드 또한 있는데 두가지가 존재한다.
 
-- `public <T> T readValue(String content, Class<T> valueType)` : Json(content)을 Object(valueType)로 변환한다.
+####`public <T> T readValue(String content, Class<T> valueType)` : Json(content)을 Object(valueType)로 변환한다.
 
 `String` 타입의 `json` 데이터를 받아 `MemberDto.class`라는 객체타입이라는 것을 알리고, `MemberDto` 객체로 인스턴스화 한다.
 
@@ -172,7 +172,7 @@ MemberDto{id='dh37789', name='홍길동', email='kill-dong@mail.com', age=31}
 ![직/역]({{site.url}}/public/image/2023/2023-06/23-deserilize003.png)
 
 
-- `public <T> T convertValue(Object fromValue, Class<T> toValueType)` : Object(fromValue)를 Object(toValueType)로 변환한다.
+#### `public <T> T convertValue(Object fromValue, Class<T> toValueType)` : Object(fromValue)를 Object(toValueType)로 변환한다.
 
 Member의 정보가 들어있는 `Map`객체를 `convertValue`를 이용해 `MemberDto.class`라는 객체타입이라는 것을 알리고, `MemberDto` 객체로 인스턴스화 한다.
 

@@ -27,7 +27,7 @@ last_modified_at: 2023-06-24
 @Getter
 @Setter
 @NoArgsConstructor
-public class Result {
+public class Response {
 
     private String code;
     private String message;
@@ -35,12 +35,12 @@ public class Result {
 }
 ```
 
-`ResponseEntity\<List\<MemberDto\>\>` 와 같은 응답 객체가 아닌 위의 Result 객체와 같은 Custom 응답 객체에 `List\<?\>`의 와일드카드 타입의 List Collection 객체에 데이터를 넣어 응답을 가져올 때 발생했다.
+`ResponseEntity\<List\<MemberDto\>\>` 와 같은 응답 객체가 아닌 위의 Response 객체와 같은 Custom 응답 객체에 `List\<?\>`의 와일드카드 타입의 List Collection 객체에 데이터를 넣어 응답을 가져올 때 발생했다.
 
 B프로젝트에서 데이터를 가져온 뒤 가져온 `MemberDto`의 가공을 위해 `MemberDto`객체로 캐스팅을 진행하고 가공을 하려던 차에 아래의 예외가 발생했다.
 
 ```java
-List<?> data = result.getData();
+List<?> data = Response.getData();
 List<MemberDto> members = data.stream()
         .map(member -> (MemberDto) member)
         .collect(Collectors.toList());
@@ -58,6 +58,20 @@ List\<?\> 데이터가 jackson을 통해 List\<MemberDto\>의 타입으로 변�
 결론적으로 말하자면 Jackson에서는 응답 데이터의 타입을 찾지 못할경우 `LinkedHashMap`으로 객체를 반환한다고 한다.
 
 그래서 응답 데이터가 List\<MemberDto\> 가 아닌 List\<LinkedHashMap\> 으로 반환이 된 것이다.
+
+```java
+public Response getMembers() {
+    Response response = memberFeign.getMembers();
+    List<?> data = Response.getData();
+    List<MemberDto> members = data.stream()
+            .map(member -> (MemberDto) member)
+            .collect(Collectors.toList());
+
+    return memberFeign.getMembers();
+}
+```
+
+이때는 저번에 정리했던 `convertValue`를 이용해서 변환해 줘야 한다.
 
 참고 : [java-lang-classcastexception-java-util-linkedhashmap-cannot-be-cast-to-com-test - stackoverflow](https://stackoverflow.com/questions/28821715/java-lang-classcastexception-java-util-linkedhashmap-cannot-be-cast-to-com-test)
 

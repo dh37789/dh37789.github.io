@@ -23,7 +23,7 @@ last_modified_at: 2023-06-24
 
 간단한 예시를 들어보자면, `FeignClient`를 이용해 MemberDto의 객체를 데이터를 A프로젝트에서 B프로젝트로 가져오는 중
 
-#### ResponseData
+**ResponseData**
 
 ```java
 @Getter
@@ -88,6 +88,9 @@ public ResponseData getMembers() {
 ```
 
 
+-----
+
+
 ## Spring에서의 Deserialize
 
 서론이 길었다. `public <T> T convertValue(Object fromValue, Class<T> toValueType)` 에서는 매개변수 `toValueType`를 이용해 클래스의 타입을 찾아 변환했다.
@@ -101,13 +104,15 @@ jackson에서는 jackson-databind라는 모듈에 타입 및 Collection 또는 �
 
 결과적으로 Spring framework에서는 `Http Response` => `Json String` => `Object` 의 과정으로 API에서 받아온 응답값을 변환하는데, 과정을 간략하게 살펴보도록 하자.
 
+
 -----
+
 
 ### Http Response To Json String
 
 먼저 API를 통해 Http 응답으로 온 Response 데이터를 Json String으로 변환시켜주는 것은 Spring Framework core에서 진행 하고 있다.
 
-##### ResponseEntityDecoder
+**ResponseEntityDecoder**
 ```java
 @Override
 public Object decode(final Response response, Type type) throws IOException, FeignException {
@@ -130,11 +135,11 @@ public Object decode(final Response response, Type type) throws IOException, Fei
 
 Response 데이터와 Controller에서 반환타입으로 지정된 객체 타입을 가져와, Response 데이터를 String 데이터로 치환한다.
 
-예시에서는 `public ResponseData getMembers()`를 사용하여, ResponseData 객체를 `Type type` 매개변수로 전달해준다.
+예시에서는 `public ResponseData getMembers()`를 사용하여, `ResponseData` 객체 정보를 `Type type` 매개변수로 전달해준다.
 
 이후 `this.decoder.decode(response, type)` 메서드로 이용해 Http Respone 응답값과 Type값을 보내 decoder를 한다.
 
-- HttpMessageConverterExtractor.java
+**HttpMessageConverterExtractor.java**
 ```java
 @Override
 @SuppressWarnings({"unchecked", "rawtypes", "resource"})
@@ -166,10 +171,9 @@ public T extractData(ClientHttpResponse response) throws IOException {
 
 String으로 변환한 Response 데이터중 body이 없을 경우 null을 반환하고, body값이 있을 경우엔 `HttpMessageConverter<T>` 인터페이스의 `read` 메서드로 보내 reponse 데이터를 읽어오도록 한다.
 
-여기서 `this.responseClass` 는 반환타입을 가져오며 예시에서의 `ResponseData` 객체를 가져온다.
+여기서 `this.responseClass` 는 반환타입을 가져오며 예시에서의 `ResponseData` 객체 정보를 가져온다.
 
-
-- AbstractJackson2HttpMessageConverter
+**AbstractJackson2HttpMessageConverter**
 ```java
 @Override
 public Object read(Type type, @Nullable Class<?> contextClass, HttpInputMessage inputMessage)
@@ -188,7 +192,7 @@ public Object read(Type type, @Nullable Class<?> contextClass, HttpInputMessage 
 
 `getJavaType(type, contextClass)` 에서는 `ObejctMapper.constructType` 을 이용해 해당 타입으로 Object를 매개변수로 가져온 type으로 캐스팅하여 **반환 타입의 인스턴스를 가져온다.**
 
-- TypeFactory
+**TypeFactory**
 ```java
 protected JavaType _fromAny(ClassStack context, Type srcType, TypeBindings bindings)
     {
@@ -220,7 +224,7 @@ protected JavaType _fromAny(ClassStack context, Type srcType, TypeBindings bindi
 
 이제 역직렬화 되는 과정을 살펴보도록 하자.
 
-- ObjectReader
+**ObjectReader**
 ```java
 protected Object _bindAndClose(JsonParser p0) throws IOException
 {
@@ -249,7 +253,7 @@ protected Object _bindAndClose(JsonParser p0) throws IOException
 }
 ```
 
-여기서 반환되는 Object 타입의 result는 Json 데이터를 Deserialize 하여 최종적으로 완성된 반환 객체를 말한다.
+여기서 반환되는 Object 타입의 result는 Json 데이터를 역직렬화 하여 최종적으로 완성된 반환 객체를 말한다.
 
 if문 안에서 response를 token으로 변환했을때 Json의 형태의 토큰이 "{", "}", "[", "]"와 같은 문자가 왔을경우 값을 변환해서 result에 역직렬화한 데이터를 넣어준다.
 
@@ -269,9 +273,9 @@ protected JsonDeserializer<Object> _findRootDeserializer(DeserializationContext 
     }
 ```
 
-Spring에서는 `BeanDeserializer`의 구현체를 이용해 Deserialize를 진행하기 때문에, `this._rootDeserializer` 전역변수에 `BeanDeserializer`의 빈이 주입되어 있다.
+Spring에서는 `BeanDeserializer`의 구현체를 이용해 역직렬화를 진행하기 때문에, `this._rootDeserializer` 전역변수에 `BeanDeserializer`의 빈이 주입되어 있다.
 
-- DefaultDeserializationContext
+**DefaultDeserializationContext**
 ```java
 public Object readRootValue(JsonParser p, JavaType valueType,
             JsonDeserializer<Object> deser, Object valueToUpdate)
@@ -285,9 +289,9 @@ public Object readRootValue(JsonParser p, JavaType valueType,
 }
 ```
 
-`DefaultDeserializationContext` 에서는 매개변수 `JsonDeserializer<Object> deser`에서 실제 Deserialize를 진행할 `JsonDeserializer<T>`의 구현체 `BeanDeserializer`로 데이터를 넘겨준다.
+`DefaultDeserializationContext` 에서는 매개변수 `JsonDeserializer<Object> deser`에서 실제 역직렬화를 진행할 `JsonDeserializer<T>`의 구현체 `BeanDeserializer`로 데이터를 넘겨준다.
 
-- BeanDeserializer
+**BeanDeserializer**
 ```java
 @Override
 public Object deserialize(JsonParser p, DeserializationContext ctxt) throws IOException
@@ -303,7 +307,7 @@ public Object deserialize(JsonParser p, DeserializationContext ctxt) throws IOEx
 
 `deserialize` 의 구현 메소드에서 `deserializeFromObject`로 넘겨줘 실제 Object에 Property를 맵핑을 진행하도록 한다.
 
-- BeanDeserializer
+**BeanDeserializer**
 ```java
 @Override
     public Object deserializeFromObject(JsonParser p, DeserializationContext ctxt) throws IOException
@@ -329,13 +333,13 @@ public Object deserialize(JsonParser p, DeserializationContext ctxt) throws IOEx
     }
 ```
 
-위 예시의 `ResponseData`의 property는 `int code`, `String message`, `List<?> data` 이렇게 세가지이다.
+위 예시의 `ResponseData`의 필드는 `int code`, `String message`, `List<?> data` 이렇게 세가지이다.
 
-그러면 `String propName = p.currentName();` 에서 property의 이름인 `code`, `message`, `data`를 각각 String으로 가져와 property의 타입을 분류한다.
+그러면 `String propName = p.currentName();` 에서 필드의 변수명인 `code`, `message`, `data`를 각각 String으로 가져와 property의 타입을 분류한다.
 
-이후 가져온 property 정보를 이용해 `prop.deserializeAndSet(p, ctxt, bean)` 에서 Deserialize를 진행한다.
+이후 가져온 property 정보를 이용해 `prop.deserializeAndSet(p, ctxt, bean)` 에서 역직렬화를 진행한다.
 
-여기서 타입별로 Deserialize를 진행하는 방법을 간단하게 정리하자면 아래와 같다.
+여기서 타입별로 역직렬화를 진행하는 방법을 간단하게 정리하자면 아래와 같다.
 
 - **String은 `StringDeserializer`**
 - **int,long과 같은 숫자 타입은 `NumberDeserializer`**
@@ -348,7 +352,7 @@ public Object deserialize(JsonParser p, DeserializationContext ctxt) throws IOEx
 
 `String message`는 String 타입이므로 `StringDeserializer`
 
-`List<?> data`는 컬렉션 객체 `List` 내부에 직접적으로 타입이 지정되지 않은 와일드카드 형식의 객체 `<?>`가 들어갔기 때문에 두번의 Deserialize를 진행한다.
+`List<?> data`는 컬렉션 객체 `List` 내부에 직접적으로 타입이 지정되지 않은 와일드카드 형식의 객체 `<?>`가 들어갔기 때문에 두번의 역직렬화를 진행한다.
 
 먼저 `CollectionDeserializer`을 이용해 `List` 객체를 역직렬화 한 뒤, `List` 원소 내부의 객체에 대한 역직렬화를 진행한다. 하지만 와일드카드 제네릭 `<?>`은 타입을 특정할 수 없으므로 `UntypedObjectDeserializerNR` 에서 LinkedHashMap으로 반환한다.
 
@@ -361,7 +365,7 @@ public Object deserialize(JsonParser p, DeserializationContext ctxt) throws IOEx
 
 jackson-databind에서는 `UntypedObjectDeserializerNR` 역직렬화 구현체를 이용하여 특정되지 않은 타입이 object 형식일 경우에는 `LinkedHashMap`, 배열타입일 경우에는 `ArrayList` 타입으로 반환하도록 되어 있었다.
 
-- UntypedObjectDeserializerNR
+**UntypedObjectDeserializerNR**
 ```java
 private Object _deserializeNR(JsonParser p, DeserializationContext ctxt,
             Scope rootScope)

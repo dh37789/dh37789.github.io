@@ -1,5 +1,5 @@
 ---
-title: "[DesignPattern] 추상 팩토리(ABSTRACT FACTORY)"
+title: "[DesignPattern] 추상 팩토리 (ABSTRACT FACTORY)"
 
 layout: post
 categories: DesignPattern

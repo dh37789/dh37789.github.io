@@ -1,5 +1,5 @@
 ---
-title: "[DesignPattern] 팩토리 메서드(Factory Method)"
+title: "[DesignPattern] 팩토리 메서드 (Factory Method)"
 
 layout: post
 categories: DesignPattern

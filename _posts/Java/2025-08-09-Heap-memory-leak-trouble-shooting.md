@@ -19,7 +19,7 @@ last_modified_at: 2025-08-09
 
 2024년 5월경, 주문 서버의 Heap 메모리 부족으로 인해 health-check API (SELECT 1)에 지연 알림이 발생했습니다.
 
-### 발생 상황:
+**발생 상황**
 
 ```text
 name: 주문 API
@@ -56,7 +56,7 @@ msg: 응답지연
 - 재기동 전 GC가 정상적으로 동작하지 못하며 메모리가 누적되는것으로 추축
 
 
-### 일시적 대응:
+**일시적 대응**
 
 주문 서버의 전체 인스턴스를 재기동하여 메모리 초기화 및 GC 복구를 진행 하였다. 하지만 근본적인 원인을 찾아 해결 하기 위해, 개발서버에서 현상을 재현하고 메모리의 덤프를 생성하여 분석을 진행하였다.
 
@@ -66,12 +66,12 @@ msg: 응답지연
 - Jmap은 Java Memory Map의 약자로 JVM의 메모리 상태를 확인하고 덤프를 생성할 수 있게 도와주는 도구 이다.
 - 우선 덤프를 생성하기 이전 메모리의 현황을 조회해 보았다.
 
-### 명령어 수행 예:
-```shell
-sudo jps sudo jmap -heap <PID>
-```
+> **명령어**
+> ```shell
+> sudo jps sudo jmap -heap <PID>
+> ```
 
-### Heap 상태 요약:
+### Heap 상태 요약
 
 ```shell
 Attaching to process ID 0000000, please wait...
@@ -119,12 +119,12 @@ PS Old Generation
 
 jamp의 로그를 분석해 본다면, 아래의 내용과 같다.
 
-### Eden / Survivor (Young)
+**Eden / Survivor (Young)**
 
 - `Eden`영역은 아직 여유가 있다 (20%정도 사용)
 - `Survivor From`영역이 97%로 꽉차있고, `To` 영역은 비어 있음 → 최근 `Minor GC` 이후 "From ↔ To" 스왑 직전 상태로 추정
 
-### Old (Tenured)
+**Old (Tenured)**
 
 - 사용율이 96.5%로 사실상 포화 상태이다.
 - 다음 `Minor GC` 에서 `Eden/From`의 살아있는 객체를 `To` 로 복사하고, 승격이 필요하면 `Old`영역으로 올리려 할테지만 `Old`의 여유가 거의 없어 승격 실패 위험이 크다.
@@ -136,10 +136,10 @@ Jmap 로그로써는 한계가 있어, 메모리 덤프를 생성하여, 분석�
 
 MAT(Eclipse Memory Analyzer Tool)은 Java Heap Dump 파일(.hprof)을 열어 메모리 누수(Leak) 분석, 대용량 객체 탐지, 메모리 사용 구조를 파악 할 수 있는 툴이다.
 
-### 덤프 파일 생성:
-```shell
-sudo jmap -dump:format=b,file=heapdump.hprof <PID>
-```
+> **덤프 파일 생성**
+> ```shell
+> sudo jmap -dump:format=b,file=heapdump.hprof <PID>
+> ```
 
 ### Heap Memory Diagram 분석
 
@@ -195,19 +195,16 @@ sudo jmap -dump:format=b,file=heapdump.hprof <PID>
 
 ## 5. Heap 분석 결론
 
-### 직접 원인
+### 원인
 
-- 위의 Jmap의 로그와 MAT의 덤프 분석을 통해 특정 클래스의 로직에서 `ClassLoader Leak`이 발생한다는 결론을 알 수 있었다.
+- 위의 Jmap의 로그와 MAT의 덤프 분석을 통해 특정 클래스의 로직에서 **`ClassLoader Leak`이 발생**한다는 결론을 알 수 있었다.
 - PayConditionUsingStatisticRedis 객체가 GC에 의해 해제되지 않고 누적되며 LaunchedURLClassLoader의 메모리를 비정상적으로 점유한다.
 - 해당 객체들은 단일 Vector 내부에 집합 형태로 저장되어 있으며, 이 Vector가 클래스 로더의 수명과 같이 가면서 회수되지 않고 있다.
 
-
-### 근본 원인
-
-**ClassLoader Leak 패턴**
-- Spring Boot의 LaunchedURLClassLoader는 애플리케이션 클래스 로딩 시 메모리를 할당함
-- 이 클래스 로더를 통해 로드된 일부 클래스가 Vector를 통해 강한 참조를 유지하며 GC 루트에 남게 됨
-- 특히 Redis 캐시 관련 도메인 객체(예: PayConditionUsingStatisticRedis)가 캐시된 채로 참조되고 있어 GC 대상에서 제외됨
+> **ClassLoader Leak 패턴**
+> - Spring Boot의 LaunchedURLClassLoader는 애플리케이션 클래스 로딩 시 메모리를 할당함
+> - 이 클래스 로더를 통해 로드된 일부 클래스가 Vector를 통해 강한 참조를 유지하며 GC 루트에 남게 됨
+> - 특히 Redis 캐시 관련 도메인 객체(예: PayConditionUsingStatisticRedis)가 캐시된 채로 참조되고 있어 GC 대상에서 제외됨
 
 
 ### GC가 해당 객체를 정리하지 못한 이유
@@ -220,17 +217,15 @@ sudo jmap -dump:format=b,file=heapdump.hprof <PID>
 - 이는 주로 ClassLoader에 의해 로드된 클래스 내부에 정적(static) 필드 또는 Singleton 객체가 외부 객체를 참조하고 있는 경우 발생
 - 결과적으로, PayConditionUsingStatisticRedis 객체는 메모리에서 GC가 불가능한 상태로 계속 남게 됨
 
-
-
-### GC Root 체계 시각화
-```text
-[JVM Root Set]
-  └─ System ClassLoader
-    └─ LaunchedURLClassLoader
-      └─ static Vector
-        └─ Object[]
-          └─ PayConditionUsingStatisticRedis 인스턴스 (26만 개)
-```
+> **GC Root 체계 시각화**
+> ```text
+> [JVM Root Set]
+>   └─ System ClassLoader
+>     └─ LaunchedURLClassLoader
+>       └─ static Vector
+>         └─ Object[]
+>           └─ PayConditionUsingStatisticRedis 인스턴스 (26만 개)
+> ```
 - 위 구조에서 Root Set에서 시작된 참조 체인이 끊기지 않기 때문에 GC 대상이 되지 않음
 
 

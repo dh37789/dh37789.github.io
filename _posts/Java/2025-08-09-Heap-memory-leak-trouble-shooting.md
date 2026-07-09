@@ -1,5 +1,5 @@
 ---
-title:  "주문 서버 Heap Memory Leak 분석 및 조치 정리"
+title:  "[Java] 주문 서버 Heap Memory Leak 분석 및 조치 정리"
 
 layout: post
 categories: Java

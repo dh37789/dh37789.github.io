@@ -1,5 +1,5 @@
 ---
-title:  "[Java] Spring의 역직렬화(deserialize) 이야기"
+title:  "[Java] Jackson 역직렬화 이해하기 2: List<?>가 LinkedHashMap이 되는 이유"
 
 layout: post
 categories: Java
@@ -8,22 +8,28 @@ toc: true
 toc_sticky: true
 
 date: 2023-06-24
-last_modified_at: 2023-06-24
+last_modified_at: 2026-07-09
 ---
 
-[Java에서의 직렬화/역직렬화](https://dh37789.github.io/java/java-deserilize-1/)를 알아봤다면 이번엔 Spring에서의 직렬화/역직렬화에 대해 알아보도록 하자.
+[이전 글](https://dh37789.github.io/java/java-deserilize-1/)에서는 Jackson `ObjectMapper`를 이용해 객체를 JSON으로 직렬화하고, JSON을 다시 객체로 역직렬화하는 기본 흐름을 살펴봤다.
 
+이번 글에서는 실제로 겪었던 `ClassCastException` 문제를 다룬다.
 
-먼저 Spring의 역직렬화를 정리하게된 계기가 있다면 `ClassCastException` 에러를 만나고 나서 였다.
+FeignClient로 다른 서비스의 회원 목록을 조회하고 있었다. 응답은 정상적으로 내려왔고, `data` 필드에도 값이 들어 있었다. 그런데 `data`의 각 원소를 `MemberDto`로 캐스팅하는 순간 다음 예외가 발생했다.
 
+```shell
+java.lang.ClassCastException: Cannot cast java.util.LinkedHashMap to MemberDto
+```
 
-## 원인
+처음에는 Jackson이 응답 JSON을 알아서 `List<MemberDto>`로 변환해줄 것이라고 생각했다. 하지만 문제는 응답 DTO의 `data` 필드가 `List<?>`로 선언되어 있었다는 점이었다.
 
-왜 `ClassCastException`가 발생했을까?
+---
 
-간단한 예시를 들어보자면, `FeignClient`를 이용해 MemberDto의 객체를 데이터를 A프로젝트에서 B프로젝트로 가져오는 중
+## 문제 상황
 
-**ResponseData**
+A 프로젝트에서 FeignClient를 이용해 B 프로젝트의 회원 목록을 조회하고 있었다.
+
+응답 객체는 다음과 같은 커스텀 wrapper 형태였다.
 
 ```java
 @Getter
@@ -37,82 +43,194 @@ public class ResponseData {
 }
 ```
 
-`ResponseEntity<List<MemberDto>>` 와 같은 응답 객체가 아닌 위의 ResponseData 객체와 같은 Custom 응답 객체에 `List<?>`의 와일드카드 타입의 List Collection 객체에 데이터를 넣어 응답을 가져올 때 발생했다.
+`ResponseEntity<List<MemberDto>>`처럼 명확한 응답 타입을 사용한 것이 아니라, `ResponseData` 안에 `List<?>` 타입의 `data` 필드가 들어 있는 구조였다.
 
-B프로젝트에서 데이터를 가져온 뒤 가져온 `MemberDto`의 가공을 위해 `MemberDto`객체로 캐스팅을 진행하고 가공을 하려던 차에 아래의 예외가 발생했다.
+응답을 받은 뒤 `data`를 꺼내 `MemberDto`로 캐스팅하려고 했다.
 
 ```java
-List<?> data = ResponseData.getData();
+List<?> data = responseData.getData();
+
 List<MemberDto> members = data.stream()
         .map(member -> (MemberDto) member)
         .collect(Collectors.toList());
 ```
 
+하지만 실행 결과는 다음과 같았다.
+
 ```shell
-org.springframework.web.util.NestedServletException: Request processing failed; nested exception is java.lang.ClassCastException: Cannot cast java.util.LinkedHashMap to kr.api.model.payment.PaymentForPersonal
+org.springframework.web.util.NestedServletException: Request processing failed;
+nested exception is java.lang.ClassCastException:
+Cannot cast java.util.LinkedHashMap to MemberDto
 ```
 
-`List<?>` 데이터가 jackson을 통해 `List<MemberDto>`의 타입으로 변환 되었을 줄 알았지만 제대로 알지 못했던 내 불찰 이었다.
+`data`의 원소가 `MemberDto`가 아니라 `LinkedHashMap`이었던 것이다.
 
+---
 
-## 에러의 원인?
+## 왜 LinkedHashMap이 되었을까?
 
-결론적으로 말하자면 Jackson에서는 응답 데이터의 타입을 찾지 못할경우 `LinkedHashMap`으로 객체를 반환한다고 한다.
+결론부터 말하면 Jackson은 `List<?>`의 원소 타입을 알 수 없다.
 
-그래서 응답 데이터가 `List<MemberDto>` 가 아닌 `List<LinkedHashMap>` 으로 반환이 된 것이다.
+`ResponseData`의 필드는 다음처럼 선언되어 있다.
 
 ```java
-public ResponseData getMembers() {
-    ResponseData response = memberFeign.getMembers();
-    List<?> data = ResponseData.getData();
-    List<MemberDto> members = data.stream()
-            .map(member -> (MemberDto) member)
-            .collect(Collectors.toList());
-
-    return memberFeign.getMembers();
-}
+private List<?> data;
 ```
 
-이때는 저번에 정리했던 `convertValue`를 이용해서 변환해 줘야 한다.
+여기서 `List`라는 컬렉션 타입은 알 수 있지만, 리스트 안에 들어갈 원소 타입은 알 수 없다.
+
+즉 Jackson 입장에서는 다음과 같이 보인다.
+
+```text
+data는 List다.
+그런데 List 안의 원소 타입은 모른다.
+```
+
+JSON 배열 안에 객체가 들어 있다면, 원소 타입을 알 수 있을 때는 해당 DTO로 만들 수 있다.
+
+```java
+List<MemberDto>
+```
+
+하지만 원소 타입을 알 수 없다면 JSON object를 특정 DTO로 만들 수 없다. 이 경우 Jackson은 타입이 특정되지 않은 object를 기본적으로 `LinkedHashMap`으로 역직렬화한다.
+
+따라서 실제 결과는 다음에 가까웠다.
+
+```text
+ResponseData
+  code: 200
+  message: "success"
+  data: List<LinkedHashMap>
+```
+
+그래서 `MemberDto`로 직접 캐스팅하면 `ClassCastException`이 발생한다.
+
+---
+
+## convertValue로 후처리하기
+
+이미 `List<?>`로 받은 상태라면, 각 원소는 `LinkedHashMap` 형태일 가능성이 높다.
+
+이 경우 이전 글에서 다룬 `ObjectMapper.convertValue()`를 이용해 `LinkedHashMap`을 `MemberDto`로 다시 변환할 수 있다.
 
 ```java
 public ResponseData getMembers() {
     ObjectMapper objectMapper = new ObjectMapper();
+
     ResponseData response = memberFeign.getMembers();
     List<?> data = response.getData();
+
     List<MemberDto> members = data.stream()
             .map(member -> objectMapper.convertValue(member, MemberDto.class))
             .collect(Collectors.toList());
-    return memberFeign.getMembers();
-  }
+
+    // members 후속 처리
+
+    return response;
+}
 ```
 
+`convertValue()`는 이미 Java 객체로 만들어진 값을 다른 타입으로 변환한다.
 
------
+```text
+LinkedHashMap → MemberDto
+```
 
+이 방법은 이미 타입 정보를 잃은 뒤 후처리해야 할 때 현실적인 해결책이다.
 
-## Spring에서의 Deserialize
+하지만 가장 좋은 해결책은 애초에 타입 정보를 잃지 않게 설계하는 것이다.
 
-서론이 길었다. `public <T> T convertValue(Object fromValue, Class<T> toValueType)` 에서는 매개변수 `toValueType`를 이용해 클래스의 타입을 찾아 변환했다.
+---
 
-그렇다면 Spring에서는 json데이터를 어떻게 자동으로 찾아서 알맞은 객체에 인스턴스 및 데이터를 불어 넣어줄까?
+## 더 나은 해결: 응답 타입을 명확히 하기
 
-jackson에서는 jackson-databind라는 모듈에 타입 및 Collection 또는 프레임워크별로 Deserialize와 Serialize를 구현해 놓았다.
+`convertValue()`는 문제를 해결할 수 있지만, 근본적으로는 `List<?>`를 사용한 응답 구조가 문제를 만든다.
 
-![jackson-databind]({{site.url}}/public/image/2023/2023-06/28-des001.png)
-(수 많은 Deserialize와 Serialize의 구현체들...)
+가능하다면 응답 DTO를 제네릭으로 선언하는 편이 낫다.
 
-결과적으로 Spring framework에서는 `Http Response` => `Json String` => `Object` 의 과정으로 API에서 받아온 응답값을 변환하는데, 과정을 간략하게 살펴보도록 하자.
+```java
+@Getter
+@Setter
+@NoArgsConstructor
+public class ResponseData<T> {
 
+    private int code;
+    private String message;
+    private T data;
+}
+```
 
------
+그리고 FeignClient의 반환 타입을 명확히 적는다.
 
+```java
+@FeignClient(name = "member-service")
+public interface MemberFeignClient {
 
-### Http Response To Json String
+    @GetMapping("/members")
+    ResponseData<List<MemberDto>> getMembers();
+}
+```
 
-먼저 API를 통해 Http 응답으로 온 Response 데이터를 Json String으로 변환시켜주는 것은 Spring Framework core에서 진행 하고 있다.
+이렇게 하면 Jackson은 `data`의 타입을 다음처럼 알 수 있다.
 
-**ResponseEntityDecoder**
+```text
+ResponseData<List<MemberDto>>
+```
+
+즉, `data`가 List이고, 그 안의 원소가 `MemberDto`라는 타입 정보가 보존된다.
+
+가능하다면 wrapper 없이 직접 명확한 타입을 반환하는 것도 방법이다.
+
+```java
+@GetMapping("/members")
+List<MemberDto> getMembers();
+```
+
+정리하면 해결책의 우선순위는 다음과 같다.
+
+| 우선순위 | 해결책 | 설명 |
+|---:|---|---|
+| 1 | 응답 DTO를 제네릭으로 선언 | `ResponseData<List<MemberDto>>`처럼 타입 정보 보존 |
+| 2 | FeignClient 반환 타입을 구체화 | 가능한 한 `List<?>`나 `Object` 반환을 피함 |
+| 3 | `TypeReference`/`JavaType` 사용 | ObjectMapper 직접 사용 시 제네릭 타입 전달 |
+| 4 | `convertValue()` 후처리 | 이미 `LinkedHashMap`으로 받은 경우 실용적 |
+
+---
+
+## Spring/Feign/Jackson의 처리 흐름
+
+문제를 이해하려면 각 계층의 역할을 나누어 보는 것이 좋다.
+
+이번 문제의 흐름은 대략 다음과 같다.
+
+```text
+FeignClient 호출
+    ↓
+HTTP Response 수신
+    ↓
+Feign Decoder
+    ↓
+SpringDecoder / HttpMessageConverter
+    ↓
+MappingJackson2HttpMessageConverter
+    ↓
+ObjectMapper / ObjectReader
+    ↓
+Jackson Databind
+    ↓
+ResponseData<List<LinkedHashMap>>
+```
+
+즉, 이 문제는 단순히 “Spring이 이상하게 변환했다”기보다는, Feign 응답 디코딩 과정에서 Spring의 `HttpMessageConverter`와 Jackson이 대상 타입 정보를 바탕으로 역직렬화를 수행한 결과다.
+
+그리고 대상 타입이 `ResponseData`였기 때문에 `data` 내부 원소 타입까지는 알 수 없었다.
+
+---
+
+## ResponseEntityDecoder
+
+FeignClient 응답 처리 과정에서 `ResponseEntityDecoder`는 `ResponseEntity<T>` 타입인지 확인하고, 실제 응답 body 처리는 내부 decoder에 위임한다.
+
 ```java
 @Override
 public Object decode(final Response response, Type type) throws IOException, FeignException {
@@ -131,35 +249,36 @@ public Object decode(final Response response, Type type) throws IOException, Fei
 
 ![jackson-databind]({{site.url}}/public/image/2023/2023-06/28-des002.png)
 
-`ResponseEntityDecoder`는 `Decoder` 인터페이스를 구현하고 있다.
+여기서 중요한 점은 `ResponseEntityDecoder` 자체가 JSON을 문자열로 바꿔 DTO로 만드는 것이 아니라, 응답 타입을 판단한 뒤 실제 처리를 내부 decoder에 넘긴다는 것이다.
 
-Response 데이터와 Controller에서 반환타입으로 지정된 객체 타입을 가져와, Response 데이터를 String 데이터로 치환한다.
+---
 
-예시에서는 `public ResponseData getMembers()`를 사용하여, `ResponseData` 객체 정보를 `Type type` 매개변수로 전달해준다.
+## HttpMessageConverter
 
-이후 `this.decoder.decode(response, type)` 메서드로 이용해 Http Respone 응답값과 Type값을 보내 decoder를 한다.
+Spring 쪽에서는 `HttpMessageConverter`가 HTTP body를 Java 객체로 읽는 역할을 한다.
 
-**HttpMessageConverterExtractor.java**
 ```java
 @Override
 @SuppressWarnings({"unchecked", "rawtypes", "resource"})
 public T extractData(ClientHttpResponse response) throws IOException {
     IntrospectingClientHttpResponse responseWrapper = new IntrospectingClientHttpResponse(response);
+
     if (!responseWrapper.hasMessageBody() || responseWrapper.hasEmptyMessageBody()) {
-      return null;
+        return null;
     }
+
     MediaType contentType = getContentType(responseWrapper);
 
     try {
-      for (HttpMessageConverter<?> messageConverter : this.messageConverters) {
-        ...
-        if (this.responseClass != null) {
-          if (messageConverter.canRead(this.responseClass, contentType)) {
+        for (HttpMessageConverter<?> messageConverter : this.messageConverters) {
             ...
-            return (T) messageConverter.read((Class) this.responseClass, responseWrapper);
-          }
+            if (this.responseClass != null) {
+                if (messageConverter.canRead(this.responseClass, contentType)) {
+                    ...
+                    return (T) messageConverter.read((Class) this.responseClass, responseWrapper);
+                }
+            }
         }
-      }
     }
     ...
 }
@@ -167,13 +286,16 @@ public T extractData(ClientHttpResponse response) throws IOException {
 
 ![jackson-databind]({{site.url}}/public/image/2023/2023-06/28-des003.png)
 
-`HttpMessageConverterExtractor` 는 `ResponseExtractor<T>` 인터페이스를 구현하였다.
+응답 body가 존재하고, Content-Type과 대상 타입을 처리할 수 있는 converter가 있으면 해당 converter가 body를 읽는다.
 
-String으로 변환한 Response 데이터중 body이 없을 경우 null을 반환하고, body값이 있을 경우엔 `HttpMessageConverter<T>` 인터페이스의 `read` 메서드로 보내 reponse 데이터를 읽어오도록 한다.
+JSON 응답이라면 일반적으로 Jackson 기반 converter가 선택된다.
 
-여기서 `this.responseClass` 는 반환타입을 가져오며 예시에서의 `ResponseData` 객체 정보를 가져온다.
+---
 
-**AbstractJackson2HttpMessageConverter**
+## AbstractJackson2HttpMessageConverter
+
+Jackson 기반 converter는 대상 타입을 Jackson의 `JavaType`으로 변환한 뒤, `ObjectMapper`를 이용해 body를 읽는다.
+
 ```java
 @Override
 public Object read(Type type, @Nullable Class<?> contextClass, HttpInputMessage inputMessage)
@@ -186,53 +308,26 @@ public Object read(Type type, @Nullable Class<?> contextClass, HttpInputMessage 
 
 ![jackson-databind]({{site.url}}/public/image/2023/2023-06/28-des004.png)
 
-`AbstractJackson2HttpMessageConverter` 는 `HttpMessageConverter<T>` 인터페이스를 상속받은 `GenericHttpMessageConverter<T>`를 구현하였다.
+여기서 `getJavaType(type, contextClass)`는 Java의 `Type` 정보를 Jackson이 이해할 수 있는 `JavaType`으로 바꾼다.
 
-이제 여기서 Response 데이터를 jackson의 `ObjectMapper`으로 넘겨주는 역할을 한다.
+이 과정에서 `ResponseData<List<MemberDto>>`처럼 제네릭 타입 정보가 있으면 Jackson은 더 구체적인 타입 정보를 알 수 있다.
 
-`getJavaType(type, contextClass)` 에서는 `ObejctMapper.constructType` 을 이용해 해당 타입으로 Object를 매개변수로 가져온 type으로 캐스팅하여 **반환 타입의 인스턴스를 가져온다.**
+반대로 단순히 `ResponseData` 또는 `ResponseData` 내부의 `List<?>`만 있으면 리스트 원소 타입은 알 수 없다.
 
-**TypeFactory**
+---
+
+## ObjectReader와 JsonDeserializer
+
+Jackson은 `ObjectReader`를 통해 JSON token을 읽고, 대상 `JavaType`에 맞는 deserializer를 찾아 객체를 만든다.
+
 ```java
-protected JavaType _fromAny(ClassStack context, Type srcType, TypeBindings bindings)
-    {
-        JavaType resultType;
-
-        // simple class?
-        if (srcType instanceof Class<?>) {
-            // Important: remove possible bindings since this is type-erased thingy
-            resultType = _fromClass(context, (Class<?>) srcType, EMPTY_BINDINGS);
-        }
-        // But if not, need to start resolving.
-        else if (srcType instanceof ParameterizedType) {
-            resultType = _fromParamType(context, (ParameterizedType) srcType, bindings);
-        }
-        else if (srcType instanceof JavaType) { // [databind#116]
-            // no need to modify further if we already had JavaType
-            return (JavaType) srcType;
-        }
-        ...
-    }
-```
-
-그다음 `readJavaType(javaType, inputMessage)`에서 Response 데이터와 `InputStream`의 데이터스트림 형태로 `ObjectReader`에 넘겨준다.
-
-
-### Json String To Object
-
-`ObjectReader`에서는 받아온 데이터스트림을 이용해 json 데이터의 역직렬화(Deserialize)를 진행한다. 이후 최종적으로 완성된 객체를 반환다.
-
-이제 역직렬화 되는 과정을 살펴보도록 하자.
-
-**ObjectReader**
-```java
-protected Object _bindAndClose(JsonParser p0) throws IOException
-{
+protected Object _bindAndClose(JsonParser p0) throws IOException {
     try (JsonParser p = p0) {
         Object result;
 
         final DefaultDeserializationContext ctxt = createDeserializationContext(p);
         JsonToken t = _initForReading(ctxt, p);
+
         if (t == JsonToken.VALUE_NULL) {
             if (_valueToUpdate == null) {
                 result = _findRootDeserializer(ctxt).getNullValue(ctxt);
@@ -244,158 +339,65 @@ protected Object _bindAndClose(JsonParser p0) throws IOException
         } else {
             result = ctxt.readRootValue(p, _valueType, _findRootDeserializer(ctxt), _valueToUpdate);
         }
-        // No need to consume the token as parser gets closed anyway
-        if (_config.isEnabled(DeserializationFeature.FAIL_ON_TRAILING_TOKENS)) {
-            _verifyNoTrailingTokens(p, ctxt, _valueType);
-        }
+
         return result;
     }
 }
 ```
 
-여기서 반환되는 Object 타입의 result는 Json 데이터를 역직렬화 하여 최종적으로 완성된 반환 객체를 말한다.
-
-if문 안에서 response를 token으로 변환했을때 Json의 형태의 토큰이 "{", "}", "[", "]"와 같은 문자가 왔을경우 값을 변환해서 result에 역직렬화한 데이터를 넣어준다.
-
-
-### Deserialize
-
-위에서 말한 수많은 Deserialize의 분기는 `ObjectReader._findRootDeserializer` 메소드에서 생성자 주입을 통해 들어온 `this._rootDeserializer` 변수를 통해서 결정된다.
+대상 타입이 일반 POJO라면 `BeanDeserializer` 계열 deserializer가 선택된다. 이 deserializer는 JSON field 이름과 Java 객체의 property를 매핑한다.
 
 ```java
-protected JsonDeserializer<Object> _findRootDeserializer(DeserializationContext ctxt)
-        throws DatabindException
-    {
-        if (_rootDeserializer != null) {
-            return _rootDeserializer;
-        }
-        ...
-    }
-```
-
-Spring에서는 `BeanDeserializer`의 구현체를 이용해 역직렬화를 진행하기 때문에, `this._rootDeserializer` 전역변수에 `BeanDeserializer`의 빈이 주입되어 있다.
-
-**DefaultDeserializationContext**
-```java
-public Object readRootValue(JsonParser p, JavaType valueType,
-            JsonDeserializer<Object> deser, Object valueToUpdate)
-        throws IOException
-{
+@Override
+public Object deserializeFromObject(JsonParser p, DeserializationContext ctxt) throws IOException {
     ...
-    if (valueToUpdate == null) {
-        return deser.deserialize(p, this);
-    }
-    return deser.deserialize(p, this, valueToUpdate);
-}
-```
-
-`DefaultDeserializationContext` 에서는 매개변수 `JsonDeserializer<Object> deser`에서 실제 역직렬화를 진행할 `JsonDeserializer<T>`의 구현체 `BeanDeserializer`로 데이터를 넘겨준다.
-
-**BeanDeserializer**
-```java
-@Override
-public Object deserialize(JsonParser p, DeserializationContext ctxt) throws IOException
-{
-    // common case first
-    if (p.isExpectedStartObjectToken()) {
-        ...
-        return deserializeFromObject(p, ctxt);
-    }
-    return _deserializeOther(p, ctxt, p.currentToken());
-}
-```
-
-`deserialize` 의 구현 메소드에서 `deserializeFromObject`로 넘겨줘 실제 Object에 Property를 맵핑을 진행하도록 한다.
-
-**BeanDeserializer**
-```java
-@Override
-    public Object deserializeFromObject(JsonParser p, DeserializationContext ctxt) throws IOException
-    {
-        ...
-        if (p.hasTokenId(JsonTokenId.ID_FIELD_NAME)) {
-            String propName = p.currentName();
-            do {
-                p.nextToken();
-                SettableBeanProperty prop = _beanProperties.find(propName);
-                if (prop != null) { // normal case
-                    try {
-                        prop.deserializeAndSet(p, ctxt, bean);
-                    } catch (Exception e) {
-                        wrapAndThrow(e, bean, propName, ctxt);
-                    }
-                    continue;
+    if (p.hasTokenId(JsonTokenId.ID_FIELD_NAME)) {
+        String propName = p.currentName();
+        do {
+            p.nextToken();
+            SettableBeanProperty prop = _beanProperties.find(propName);
+            if (prop != null) {
+                try {
+                    prop.deserializeAndSet(p, ctxt, bean);
+                } catch (Exception e) {
+                    wrapAndThrow(e, bean, propName, ctxt);
                 }
-                handleUnknownVanilla(p, ctxt, bean, propName);
-            } while ((propName = p.nextFieldName()) != null);
-        }
-        return bean;
-    }
-```
-
-위 예시의 `ResponseData`의 필드는 `int code`, `String message`, `List<?> data` 이렇게 세가지이다.
-
-그러면 `String propName = p.currentName();` 에서 필드의 변수명인 `code`, `message`, `data`를 각각 String으로 가져와 property의 타입을 분류한다.
-
-이후 가져온 property 정보를 이용해 `prop.deserializeAndSet(p, ctxt, bean)` 에서 역직렬화를 진행한다.
-
-여기서 타입별로 역직렬화를 진행하는 방법을 간단하게 정리하자면 아래와 같다.
-
-- **String은 `StringDeserializer`**
-- **int,long과 같은 숫자 타입은 `NumberDeserializer`**
-- **List나 Map과 같은 Collection은 `CollectionDeserializer`**
-- **그외 타입을 특정할 수 없는 객체는 `UntypedObjectDeserializerNR`**
-
-그렇다면 예시의 `ResponseData`의 상황에 대입하여 확인해보자.
-
-`int code`는 숫자 타입이므로, `NumberDeserializer`
-
-`String message`는 String 타입이므로 `StringDeserializer`
-
-`List<?> data`는 컬렉션 객체 `List` 내부에 직접적으로 타입이 지정되지 않은 와일드카드 형식의 객체 `<?>`가 들어갔기 때문에 두번의 역직렬화를 진행한다.
-
-먼저 `CollectionDeserializer`을 이용해 `List` 객체를 역직렬화 한 뒤, `List` 원소 내부의 객체에 대한 역직렬화를 진행한다. 하지만 와일드카드 제네릭 `<?>`은 타입을 특정할 수 없으므로 `UntypedObjectDeserializerNR` 에서 LinkedHashMap으로 반환한다.
-
-이렇게 최종적으로 완성된 객체 데이터를 위에서 말한 `ObjectReader`가 `Object` 반환타입으로 반환하게 된다.
-
-
-### 특정되지 않은 타입?
-
-부가적으로 처음에 왜 특정되지 않은 타입이 어떻게 `LinkedHashMap`의 형식으로 가져오나에 대해 확인해보니 아래와 같았다.
-
-jackson-databind에서는 `UntypedObjectDeserializerNR` 역직렬화 구현체를 이용하여 특정되지 않은 타입이 object 형식일 경우에는 `LinkedHashMap`, 배열타입일 경우에는 `ArrayList` 타입으로 반환하도록 되어 있었다.
-
-**UntypedObjectDeserializerNR**
-```java
-private Object _deserializeNR(JsonParser p, DeserializationContext ctxt,
-            Scope rootScope)
-        throws IOException
-{
-    ...
-    outer_loop:
-    while (true) {
-        if (currScope.isObject()) {
-            String propName = p.nextFieldName();
-            ...
-            for (; propName != null; propName = p.nextFieldName()) {
-                Object value;
-                ...
-                currScope.putValue(propName, value);
+                continue;
             }
-            ...
-        } else {
-            // Otherwise we must have an Array
-            arrayLoop:
-            while (true) {
-                JsonToken t = p.nextToken();
-                Object value;
-                ...
-                currScope.addValue(value);
-            }
-        }
+            handleUnknownVanilla(p, ctxt, bean, propName);
+        } while ((propName = p.nextFieldName()) != null);
     }
+    return bean;
 }
 ```
+
+예제의 `ResponseData` 필드는 다음 세 개다.
+
+```java
+private int code;
+private String message;
+private List<?> data;
+```
+
+각 필드에 대해 Jackson은 타입에 맞는 deserializer를 선택한다.
+
+| 필드 | 타입 | 사용되는 deserializer 예시 |
+|---|---|---|
+| `code` | `int` | NumberDeserializer |
+| `message` | `String` | StringDeserializer |
+| `data` | `List<?>` | CollectionDeserializer + UntypedObjectDeserializer |
+
+`data`는 List이므로 컬렉션 자체는 `CollectionDeserializer`가 처리한다. 하지만 리스트 내부 원소 타입은 `?`라서 구체 타입을 알 수 없다.
+
+따라서 각 원소가 JSON object라면 `UntypedObjectDeserializer` 계열이 처리하고, 기본적으로 `LinkedHashMap`으로 만들어진다.
+
+---
+
+## 타입이 없는 Object는 어떻게 LinkedHashMap이 될까?
+
+Jackson Databind의 untyped object 처리에서는 JSON object를 `Map` 형태로 만든다.
+
+예를 들어 `UntypedObjectDeserializerNR` 내부에는 object 값을 map에 넣는 흐름이 있다.
 
 ```java
 public void putValue(String key, Object value) {
@@ -410,7 +412,22 @@ public void putValue(String key, Object value) {
 }
 ```
 
-json 형태가 Object일 경우 `LinkedHashMap`의 타입으로 만들어 property의 변수명을 key값, 내용을 value값을 put해서 반환하고 있다.
+JSON object의 field 이름은 key가 되고, field 값은 value가 된다.
+
+```text
+{
+  "id": "dh37789",
+  "name": "홍길동"
+}
+```
+
+위 JSON object는 타입이 특정되지 않은 상황에서 대략 다음 형태가 된다.
+
+```java
+LinkedHashMap<String, Object>
+```
+
+배열은 `ArrayList`로 만들어진다.
 
 ```java
 public void addValue(Object value) {
@@ -421,19 +438,49 @@ public void addValue(Object value) {
 }
 ```
 
-json 형태가 배열일 경우 `ArrayList`의 타입으로 만들어 value값을 add해서 반환하고 있다.
+그래서 `List<?> data`는 결과적으로 다음처럼 만들어질 수 있다.
 
+```text
+List<LinkedHashMap<String, Object>>
+```
 
-## 그래서?
+---
 
-처음 당연히 타입을 받아올 거라 생각했던 `List<?>`에서 `ClassCastException`가 발생해 분석하다보니 나의 무지가 너무 창피하기도 했고, 다시 생각해보니 어떻게 응답 데이터를 타입에 맞게 변환해오는지 궁금증이 생겼다.
+## 정리
 
-그래서 위와 같이 분석을 하게 된건데 이렇게 또 분석해보니 뿌듯하기도하고, 재미도 있었던것 같다.
+이번 문제의 핵심은 `List<?>`가 편해 보이지만, 역직렬화 시 원소 타입 정보를 잃는다는 점이었다.
 
-앞으론 내가 사용하는 것들이 최소한 어떻게 돌아가는지는 알아야겠다..라는 생각이 들었다.
+처음에는 FeignClient와 Jackson이 응답 JSON을 자동으로 `List<MemberDto>`로 만들어줄 것이라 생각했다. 하지만 `ResponseData`의 `data` 필드는 `List<?>`였고, Jackson은 리스트 내부 원소 타입을 알 수 없었다.
 
+그 결과 JSON object는 `MemberDto`가 아니라 `LinkedHashMap`으로 역직렬화되었다.
 
-참고 : [java-lang-classcastexception-java-util-linkedhashmap-cannot-be-cast-to-com-test - stackoverflow](https://stackoverflow.com/questions/28821715/java-lang-classcastexception-java-util-linkedhashmap-cannot-be-cast-to-com-test)
+```text
+List<?> data
+    ↓
+원소 타입을 알 수 없음
+    ↓
+JSON object를 LinkedHashMap으로 역직렬화
+    ↓
+MemberDto 캐스팅 시 ClassCastException
+```
 
+실무적으로는 다음 순서로 해결하는 것이 좋다.
 
+1. 가능하면 응답 타입을 `ResponseData<List<MemberDto>>`처럼 명확히 선언한다.
+2. `List<?>`, `Object`, raw type을 응답 DTO에 사용하는 것을 피한다.
+3. 이미 `LinkedHashMap`으로 받은 경우에는 `ObjectMapper.convertValue()`로 후처리한다.
+4. ObjectMapper를 직접 사용할 때는 `TypeReference`나 `JavaType`으로 제네릭 타입 정보를 전달한다.
 
+결국 중요한 것은 Jackson이 어떤 타입으로 역직렬화해야 하는지 알 수 있도록 타입 정보를 잃지 않는 것이다.
+
+---
+
+## 마무리
+
+이번 문제는 단순한 캐스팅 오류처럼 보였지만, 실제로는 FeignClient 응답 디코딩과 Jackson 역직렬화에서 타입 정보가 어떻게 사용되는지 이해해야 해결할 수 있었다.
+
+특히 `List<?>`는 “아무 타입이나 담을 수 있다”는 점에서 편해 보이지만, 역직렬화 관점에서는 “원소 타입을 알 수 없다”는 의미가 된다.
+
+앞으로는 외부 API 응답 DTO를 설계할 때 wrapper 구조를 사용하더라도 내부 데이터 타입을 제네릭으로 명확히 표현해야겠다고 느꼈다.
+
+참고: [java-lang-classcastexception-java-util-linkedhashmap-cannot-be-cast-to-com-test - stackoverflow](https://stackoverflow.com/questions/28821715/java-lang-classcastexception-java-util-linkedhashmap-cannot-be-cast-to-com-test)

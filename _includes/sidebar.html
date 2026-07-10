@@ -30,17 +30,20 @@
     <div>
       <div class="sidebar-nav-item">카테고리</div>
       <nav class="content-ul">
-        {% for category in site.categories %}
-        <a href="{{ root_url }}/{{ site.category_dir }}{{ category | first }}" class="sidebar-nav-item pl-3rem">
-          {% for page in site.pages %}
-          {% if page.name != null %}
-          {% if page.category == category[0] %}
-          <span class="name"><span class="tab">&#9;</span>{{ page.subject }}</span>
+        {% for cat_name in site.category_order %}
+        {% assign category = site.categories[cat_name] %}
+        {% if category %}
+        <a href="{{ root_url }}/{{ site.category_dir }}{{ cat_name }}" class="sidebar-nav-item pl-3rem">
+          {% for cat_page in site.pages %}
+          {% if cat_page.name != null %}
+          {% if cat_page.category == cat_name %}
+          <span class="name"><span class="tab">&#9;</span>{{ cat_page.subject }}</span>
           {% endif %}
           {% endif %}
           {% endfor %}
-          <span class="badge sidebar-nav-badge">{{ category | last | size }}</span>
+          <span class="badge sidebar-nav-badge">{{ category | size }}</span>
         </a>
+        {% endif %}
         {% endfor %}
       </nav>
     </div>

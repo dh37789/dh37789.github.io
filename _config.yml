@@ -26,3 +26,20 @@ google_analytics_id: G-B4JZGH42KG
 category_dir: category/
 
 permalink: /:categories/:title/
+
+# 사이드바 카테고리 표시 순서 (원하는 순서로 변경 가능)
+category_order:
+  - AI
+  - Java
+  - JPA
+  - Docker
+  - DB
+  - git
+  - security
+  - algorithm
+  - algorithmQuestion
+  - Book
+  - EffectiveJava
+  - Refactoring
+  - DesignPattern
+  - CleanCode

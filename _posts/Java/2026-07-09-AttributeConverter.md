@@ -174,6 +174,12 @@ this.encrypt = encrypt;
 
 하지만 위 구조에서는 `CellPhone`이 도메인 값 객체이면서 동시에 JPA Converter 역할을 수행하고 있었다.
 
+실제로 여러번 테스트를 돌려본 결과 데이터가 점점 잘못된 데이터로 Update하는 걸 볼 수 있었다.
+
+![데이터오염1]({{site.url}}/public/image/2026/07/09-attribute_1.png)
+
+![데이터오염2]({{site.url}}/public/image/2026/07/09-attribute_2.png)
+
 ---
 
 ## 4. 왜 이 구조가 위험한가

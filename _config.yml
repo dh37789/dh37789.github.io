@@ -1,31 +1,30 @@
-# Setup
-title:               DEV ℧
-tagline:             'Developer Diary'
-description:         '주니어 백엔드 개발자'
-url:                 https://dh37789.github.io
-baseurl:             ''
-paginate:            5
-permalink:           pretty
-github:              https://github.com/dh37789
-future:              true
-published:           true
+# Site
+title: DEV ℧
+tagline: Developer Diary
+description: 주니어 백엔드 개발자
+lang: ko
+url: https://dh37789.github.io
+baseurl: ""
+github: https://github.com/dh37789
 
-# About/contact
-author:
-  name:              Oh MyeongHak
-  email:             dhaudgkr@gmail.com
-
-# Gems
+# Build
+permalink: /:categories/:title/
+paginate: 5
+future: true
+published: true
 plugins:
   - jekyll-paginate
 
-# Custom vars
-version:             1.1.0
+# Author
+author:
+  name: Oh MyeongHak
+  email: dhaudgkr@gmail.com
+
+# Theme and integrations
+version: 1.1.0
 google_analytics_id: G-B4JZGH42KG
 
 category_dir: category/
-
-permalink: /:categories/:title/
 
 # 사이드바 카테고리 표시 순서 (원하는 순서로 변경 가능)
 category_order:

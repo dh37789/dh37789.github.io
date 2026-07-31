@@ -5,40 +5,45 @@ title: Home
 
 <div class="posts">
   {% for post in paginator.posts %}
-  <div class="post">
-    <h1 class="post-title">
-      <a href="{{ post.url | absolute_url }}">
-        {{ post.title }}
-      </a>
-    </h1>
+  <article class="post">
+    <header>
+      <h1 class="post-title">
+        <a href="{{ post.url | relative_url }}">{{ post.title }}</a>
+      </h1>
+      <time class="post-date" datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date_to_string }}</time>
+      {% for category in post.categories %}
+      <span class="post-tag">{{ category }}</span>
+      {% endfor %}
+    </header>
 
-    <span class="post-date">{{ post.date | date_to_string }}&nbsp;&nbsp;<a class="post-tag">{{ post.categories }}</a></span>
-    <article>
-      {{ post.content | truncatewords: 45 | markdownify }}
-    <article>
+    <div class="post-excerpt">
+      {{ post.content | strip_html | truncatewords: 45 }}
+    </div>
+
     <div class="post-more">
       {% if site.disqus_short_name %}
-      <a href="{{ site.baseurl }}{{ post.url }}#disqus_thread"> <i class="fa fa-comments" aria-hidden="true"></i>Comment</a>&nbsp;
+      <a href="{{ post.url | relative_url }}#disqus_thread">
+        <i class="fa fa-comments" aria-hidden="true"></i> Comment
+      </a>
       {% endif %}
-      <a href="{{ site.baseurl }}{{ post.url }}"><i class="fa fa-plus-circle" aria-hidden="true"></i> Read more</a>
+      <a href="{{ post.url | relative_url }}">
+        <i class="fa fa-plus-circle" aria-hidden="true"></i> Read more
+      </a>
     </div>
-  </div>
+  </article>
   {% endfor %}
 </div>
 
-<div class="pagination">
+<nav class="pagination" aria-label="글 목록 페이지">
   {% if paginator.next_page %}
-    <a class="pagination-item older" href="{{ paginator.next_page_path | absolute_url }}">Older</a>
+    <a class="pagination-item older" href="{{ paginator.next_page_path | relative_url }}">Older</a>
   {% else %}
-    <span class="pagination-item older">Older</span>
+    <span class="pagination-item older" aria-disabled="true">Older</span>
   {% endif %}
+
   {% if paginator.previous_page %}
-    {% if paginator.page == 2 %}
-      <a class="pagination-item newer" href="{{ '/' | absolute_url }}">Newer</a>
-    {% else %}
-      <a class="pagination-item newer" href="{{ paginator.previous_page_path | absolute_url }}">Newer</a>
-    {% endif %}
+    <a class="pagination-item newer" href="{{ paginator.previous_page_path | relative_url }}">Newer</a>
   {% else %}
-    <span class="pagination-item newer">Newer</span>
+    <span class="pagination-item newer" aria-disabled="true">Newer</span>
   {% endif %}
-</div>
+</nav>

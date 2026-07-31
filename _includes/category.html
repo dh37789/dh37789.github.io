@@ -1,25 +1,32 @@
 <div class="tags-expo">
-  <div class="tags-expo-list">
-    {% for tag in site.categories %}
-    <a href="#{{ tag[0] | slugify }}" class="post-tag">{{ tag[0] }}</a>
+  <nav class="tags-expo-list" aria-label="카테고리">
+    {% for category_name in site.category_order %}
+      {% assign category_posts = site.categories[category_name] %}
+      {% assign category_page = site.pages | where: "category", category_name | first %}
+      {% if category_posts and category_page %}
+      <a
+        class="post-tag{% if page.category == category_name %} active{% endif %}"
+        href="{{ category_page.url | relative_url }}"
+        {% if page.category == category_name %}aria-current="page"{% endif %}
+      >{{ category_page.subject }}</a>
+      {% endif %}
     {% endfor %}
-  </div>
-  <hr/>
-  <div class="tags-expo-section">
-    {% for tag in site.categories %}
-    {% if tag[0] == page.category %}
-    <h2 id="{{ tag[0] | slugify }}">{{ page.subject }}</h2>
+  </nav>
+
+  <hr>
+
+  <section class="tags-expo-section" aria-labelledby="category-title">
+    <h2 id="category-title">{{ page.subject }}</h2>
     <ul class="tags-expo-posts">
-      {% for post in tag[1] %}
-      <a class="post-title" href="{{ site.baseurl }}{{ post.url }}">
-        <li class="post-list">
+      {% assign category_posts = site.categories[page.category] %}
+      {% for post in category_posts %}
+      <li class="post-list">
+        <a class="post-title" href="{{ post.url | relative_url }}">
           {{ post.title }}
-          <small class="post-date">{{ post.date | date_to_string }}</small>
-        </li>
-      </a>
+          <time class="post-date" datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date_to_string }}</time>
+        </a>
+      </li>
       {% endfor %}
     </ul>
-    {% endif %}
-    {% endfor %}
-  </div>
+  </section>
 </div>
